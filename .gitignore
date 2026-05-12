@@ -1,0 +1,19 @@
+# Dependencies — never commit, Vercel doesn't need them for static sites
+node_modules/
+
+# Local dev tools
+.claude/
+
+# OS files
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Editor
+.vscode/
+*.swp
+*.swo
+
+# Build output (not used — site is pure HTML)
+dist/
+.vercel/
