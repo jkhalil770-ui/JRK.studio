@@ -2134,15 +2134,31 @@ function resetForm() {
   function loadFrame(idx, cb) {
     var img = new Image();
     img.onload = function() {
-      cache[idx] = chromaKey(img);
-      if (idx === 0) { /* initial frame (laptop open): paint immediately */
-        cvs.width  = cache[idx].width;
-        cvs.height = cache[idx].height;
-        ctx.clearRect(0, 0, cvs.width, cvs.height);
-        ctx.drawImage(cache[idx], 0, 0);
-        currentFrame = 0;
+      try {
+        cache[idx] = chromaKey(img);
+        if (idx === 0) { /* initial frame (laptop open): paint immediately */
+          cvs.width  = cache[idx].width;
+          cvs.height = cache[idx].height;
+          ctx.clearRect(0, 0, cvs.width, cvs.height);
+          ctx.drawImage(cache[idx], 0, 0);
+          currentFrame = 0;
+        }
+      } catch(e) {
+        console.error("Canvas process error frame", idx, e);
+        cache[idx] = img; // Fallback to raw JPG if canvas errors out
+        if (idx === 0) {
+          cvs.width  = img.naturalWidth || 820;
+          cvs.height = img.naturalHeight || 1024;
+          ctx.clearRect(0, 0, cvs.width, cvs.height);
+          ctx.drawImage(img, 0, 0);
+          currentFrame = 0;
+        }
       }
       if (cb) cb();
+    };
+    img.onerror = function() {
+      console.error("Failed to load frame", idx);
+      if (cb) cb(); // keep the sequence going even if 1 frame fails
     };
     img.src = srcs[idx];
   }
@@ -2153,18 +2169,14 @@ function resetForm() {
     return;
   }
 
-  /* Load frame 0 first (laptop OPEN = initial state), then 26, then rest */
+  /* Load frame 0 first (laptop OPEN = initial state), then load rest sequentially */
   loadFrame(0, function(){
-    loadFrame(26, function(){
-      var idle = window.requestIdleCallback || function(fn){ setTimeout(fn, 80); };
-      var i = 1;
-      function loadNext(){
-        if (i >= TOTAL) return;
-        if (i === 0) { i++; loadNext(); return; }
-        loadFrame(i++, function(){ idle(loadNext); });
-      }
-      idle(loadNext);
-    });
+    var i = 1;
+    function loadNext(){
+      if (i >= TOTAL) return;
+      loadFrame(i++, loadNext); // Load sequentially without idle starvation
+    }
+    loadNext();
   });
 
   /* ── Scroll animation: laptop closes on scroll down ── */
