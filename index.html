@@ -14,8 +14,8 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="preload" href="assets/avatar/frame-26.jpg" as="image" fetchpriority="high">
 <link rel="preload" href="assets/avatar/frame-00.jpg" as="image">
-<link rel="preload" href="assets/avatar/frame-13.jpg" as="image">
 
 <style>
 /* =====================================================================
@@ -393,356 +393,103 @@ section{padding:120px 24px;position:relative}
 .orbit.r2 .orbit-track{animation-duration:9s;animation-direction:reverse}
 .orbit.r3 .orbit-track{animation-duration:18s}
 
-/* ── persona orb — pure CSS cinematic presence, no images/canvas ── */
-.persona-orb{
+/* ── avatar stage — scroll-driven 27-frame sequence ── */
+/* mix-blend-mode: screen on #030303 bg: black JPG px → transparent.
+   Frame 26 = laptop closed (initial), frame 00 = open (scroll target).
+   GSAP ScrollTrigger drives the sequence; CSS float is always-on idle. */
+.av-stage{
   position:absolute;inset:0;
-  display:grid;place-items:center;
-  pointer-events:none;overflow:hidden;
-  z-index:2;
-  /* background required: gives mix-blend-mode: screen a dark target so
-     the avatar JPG's black areas become transparent inside this context */
+  pointer-events:none;z-index:2;
   background:var(--bg,#030303);
 }
 
-/* atmospheric halos */
-.pa-halo{position:absolute;border-radius:50%;pointer-events:none}
-.pa-halo-1{
-  width:88%;height:88%;
-  background:radial-gradient(circle at 50% 48%,
-    rgba(140,90,255,.12) 0%,rgba(80,40,200,.07) 40%,transparent 70%);
-  filter:blur(50px);
-  animation:paHalo 14s ease-in-out infinite;
-}
-.pa-halo-2{
-  width:115%;height:115%;
-  background:radial-gradient(circle at 56% 44%,
-    rgba(200,150,255,.06) 0%,rgba(100,50,180,.03) 35%,transparent 65%);
-  filter:blur(70px);
-  animation:paHalo 19s ease-in-out 4s infinite reverse;
-}
-.pa-halo-3{
-  width:65%;height:65%;
-  background:radial-gradient(circle at 44% 38%,
-    rgba(255,210,160,.05) 0%,rgba(200,140,80,.02) 45%,transparent 70%);
-  filter:blur(28px);
-  animation:paHalo 10s ease-in-out 2s infinite;
-}
-@keyframes paHalo{
-  0%,100%{opacity:.7;transform:scale(1)}
-  50%{opacity:1;transform:scale(1.09)}
-}
-
-/* central sphere */
-.pa-sphere{
-  position:absolute;width:54%;aspect-ratio:1;border-radius:50%;
-  background:
-    radial-gradient(circle at 34% 30%,
-      rgba(255,255,255,.09) 0%,
-      rgba(200,160,255,.13) 14%,
-      rgba(140,90,240,.09) 33%,
-      rgba(80,30,180,.06) 54%,
-      rgba(20,5,60,.03) 72%,
-      transparent 85%);
-  box-shadow:
-    0 0 70px rgba(140,90,255,.22),
-    0 0 140px rgba(100,50,200,.12),
-    0 0 240px rgba(80,30,160,.07),
-    inset 0 0 50px rgba(200,160,255,.07);
-  animation:paSphereFloat 14s ease-in-out infinite;
-  will-change:transform;
-}
-.pa-sphere::before{
-  content:'';position:absolute;
-  width:38%;height:28%;top:11%;left:16%;
+/* ambient atmospheric halo */
+.avs-glow{
+  position:absolute;
+  width:82%;height:90%;
+  top:5%;left:9%;
   border-radius:50%;
-  background:radial-gradient(ellipse,rgba(255,255,255,.18),transparent 70%);
-  filter:blur(7px);
+  background:radial-gradient(ellipse at 50% 52%,
+    rgba(100,60,210,.22) 0%,
+    rgba(70,35,160,.11) 45%,
+    transparent 78%);
+  filter:blur(44px);
+  animation:avsGlowPulse 9s ease-in-out infinite;
 }
-.pa-sphere::after{
-  content:'';position:absolute;inset:-1px;border-radius:50%;
-  border:1px solid rgba(180,140,255,.16);
-  box-shadow:0 0 26px rgba(160,110,255,.11);
-}
-@keyframes paSphereFloat{
-  0%,100%{transform:translateY(0) scale(1)}
-  50%{transform:translateY(-10px) scale(1.015)}
-}
-
-/* inner core pulse */
-.pa-inner{
-  position:absolute;inset:22%;border-radius:50%;
-  background:radial-gradient(circle,rgba(220,190,255,.10),transparent 70%);
-  animation:paInner 8s ease-in-out infinite;
-}
-@keyframes paInner{
-  0%,100%{opacity:.5;transform:scale(1)}
-  50%{opacity:1;transform:scale(1.12)}
+@keyframes avsGlowPulse{
+  0%,100%{opacity:.78;transform:scale(1)}
+  50%{opacity:1;transform:scale(1.07)}
 }
 
-/* outer rim rings */
-.pa-rim{
-  position:absolute;width:63%;aspect-ratio:1;border-radius:50%;
-  border:1px solid rgba(160,110,255,.15);
-  box-shadow:0 0 30px rgba(140,90,255,.09);
-  animation:paRim 11s ease-in-out infinite;
-  will-change:transform;
-}
-.pa-rim2{
-  position:absolute;width:76%;aspect-ratio:1;border-radius:50%;
-  border:1px solid rgba(140,90,255,.07);
-  animation:paRim 17s ease-in-out 3s infinite reverse;
-  will-change:transform;
-}
-@keyframes paRim{
-  0%,100%{transform:scale(1);opacity:.7}
-  50%{transform:scale(1.05);opacity:1}
-}
-
-/* conic light rays — barely visible, cinematic depth */
-.pa-rays{
-  position:absolute;inset:-20%;pointer-events:none;
-  background:conic-gradient(from 220deg at 50% 48%,
-    transparent 0deg,rgba(160,110,255,.016) 8deg,transparent 20deg,
-    transparent 62deg,rgba(140,90,255,.013) 70deg,transparent 82deg,
-    transparent 130deg,rgba(180,130,255,.015) 139deg,transparent 150deg,
-    transparent 200deg,rgba(160,100,255,.011) 208deg,transparent 220deg);
-  animation:paRaysRotate 45s linear infinite;
-}
-@keyframes paRaysRotate{to{transform:rotate(360deg)}}
-
-/* floating star particles */
-.pa-particles{position:absolute;inset:0;pointer-events:none}
-.pa-particles i{
-  position:absolute;border-radius:50%;font-style:normal;
-  left:var(--x);top:var(--y);
-  width:var(--s,2px);height:var(--s,2px);
-  background:rgba(255,255,255,var(--o,.5));
-  box-shadow:0 0 8px rgba(200,170,255,calc(var(--o,.5)*1.6));
-  animation:paParticle var(--d,9s) ease-in-out var(--dl,0s) infinite;
-  will-change:transform;
-}
-@keyframes paParticle{
-  0%,100%{transform:translate(0,0) scale(1);opacity:var(--o,.5)}
-  30%{transform:translate(-3px,-9px) scale(1.4);opacity:calc(var(--o,.5)*1.7)}
-  70%{transform:translate(4px,-5px) scale(.7);opacity:calc(var(--o,.5)*.55)}
-}
-
-/* floor glow */
-.pa-floor{
-  position:absolute;left:25%;right:25%;bottom:7%;height:20px;
-  border-radius:50%;
-  background:radial-gradient(ellipse at center,rgba(140,90,255,.16),transparent 70%);
-  filter:blur(12px);
-  animation:paFloor 14s ease-in-out infinite;
-  z-index:1;
-}
-@keyframes paFloor{
-  0%,100%{opacity:.5;transform:scaleX(1)}
-  50%{opacity:.9;transform:scaleX(.8)}
-}
-
-/* ── cinematic avatar — holographic composite inside persona-orb ── */
-/* brightness(4.5) drives near-black JPG px to zero → transparent via screen.
-   9-stop mask + atmospheric veil = soft environmental dissolve, not cutout.
-   3 independent glow layers + float/breath/shimmer/scan = luxury motion. */
-.cine-av{
+/* float wrapper — idle cinematic motion */
+.avs-float{
   position:absolute;inset:0;
-  pointer-events:none;z-index:5;
+  animation:avsFloat 6s ease-in-out infinite;
+}
+@keyframes avsFloat{
+  0%,100%{transform:translateY(0)}
+  50%{transform:translateY(-14px)}
 }
 
-/* Atmospheric glow field — avatar as environmental light source */
-.cav-glow{position:absolute;border-radius:50%;pointer-events:none}
-.cav-glow--deep{
-  width:90%;height:105%;top:2%;left:5%;
-  background:radial-gradient(ellipse at 50% 40%,
-    rgba(120,70,240,.30) 0%,
-    rgba(90,45,200,.16) 35%,
-    rgba(60,25,150,.06) 60%,
-    transparent 80%);
-  filter:blur(38px);
-  animation:cavGlowDeep 22s ease-in-out -8s infinite;
-}
-.cav-glow--mid{
-  width:65%;height:78%;top:11%;left:17%;
-  background:radial-gradient(ellipse at 50% 38%,
-    rgba(160,100,255,.24) 0%,
-    rgba(110,60,210,.11) 40%,
-    transparent 72%);
-  filter:blur(22px);
-  animation:cavGlowMid 13s ease-in-out -3s infinite;
-}
-.cav-glow--hot{
-  width:38%;height:44%;top:13%;left:31%;
-  background:radial-gradient(ellipse at 50% 35%,
-    rgba(210,170,255,.20) 0%,
-    rgba(165,115,255,.08) 50%,
-    transparent 80%);
-  filter:blur(14px);
-  animation:cavGlowHot 7s ease-in-out -2s infinite;
-}
-@keyframes cavGlowDeep{
-  0%,100%{opacity:.75;transform:scale(1) translate(0,0)}
-  30%{opacity:1;transform:scale(1.07) translate(4px,-5px)}
-  65%{opacity:.55;transform:scale(.94) translate(-3px,7px)}
-}
-@keyframes cavGlowMid{
-  0%,100%{opacity:.8;transform:scale(1)}
-  40%{opacity:1;transform:scale(1.11)}
-  72%{opacity:.55;transform:scale(.91)}
-}
-@keyframes cavGlowHot{
-  0%,100%{opacity:.7;transform:scale(1)}
-  50%{opacity:1;transform:scale(1.08)}
-}
-
-/* Portrait — outer wrapper drives multi-axis float + micro-rotation */
-.cav-float{
-  position:absolute;inset:0;
-  animation:cavFloat 18s ease-in-out -4s infinite;
-}
-@keyframes cavFloat{
-  0%,100%{transform:translateY(0) translateX(0) rotate(0deg)}
-  18%{transform:translateY(-11px) translateX(2.5px) rotate(.25deg)}
-  42%{transform:translateY(-19px) translateX(-2.5px) rotate(-.3deg)}
-  65%{transform:translateY(-13px) translateX(3px) rotate(.2deg)}
-  83%{transform:translateY(-5px) translateX(-1.5px) rotate(-.15deg)}
-}
-
-/* Portrait — inner wrapper drives subtle breathing scale */
-.cav-breath{
-  position:absolute;inset:0;
-  animation:cavBreath 9s ease-in-out -1.5s infinite;
-}
-@keyframes cavBreath{
-  0%,100%{transform:scale(1)}
-  45%{transform:scale(1.022)}
-  80%{transform:scale(.995)}
-}
-
-/* Avatar images — screen-composited, 9-stop atmospheric mask */
-.cav-img{
+/* sequenced portrait image */
+.avs-img{
   position:absolute;inset:0;
   width:100%;height:100%;
   object-fit:contain;
-  object-position:50% 40%;
+  object-position:50% 50%;
   mix-blend-mode:screen;
-  filter:brightness(4.5) contrast(2.0) saturate(1.05)
-         drop-shadow(0 0 22px rgba(140,90,255,.70))
-         drop-shadow(0 0 55px rgba(110,60,220,.38))
-         drop-shadow(0 0 95px rgba(80,35,180,.18));
-  -webkit-mask-image:radial-gradient(ellipse 68% 82% at 50% 40%,
+  filter:brightness(1.12) contrast(1.08) saturate(1.06);
+  -webkit-mask-image:radial-gradient(ellipse 83% 92% at 50% 50%,
     black 0%,
-    black 20%,
-    rgba(0,0,0,.97) 32%,
-    rgba(0,0,0,.88) 42%,
-    rgba(0,0,0,.70) 52%,
-    rgba(0,0,0,.45) 62%,
-    rgba(0,0,0,.20) 72%,
-    rgba(0,0,0,.06) 82%,
-    transparent 92%);
-  mask-image:radial-gradient(ellipse 68% 82% at 50% 40%,
+    black 28%,
+    rgba(0,0,0,.97) 40%,
+    rgba(0,0,0,.85) 52%,
+    rgba(0,0,0,.60) 64%,
+    rgba(0,0,0,.28) 75%,
+    rgba(0,0,0,.07) 86%,
+    transparent 95%);
+  mask-image:radial-gradient(ellipse 83% 92% at 50% 50%,
     black 0%,
-    black 20%,
-    rgba(0,0,0,.97) 32%,
-    rgba(0,0,0,.88) 42%,
-    rgba(0,0,0,.70) 52%,
-    rgba(0,0,0,.45) 62%,
-    rgba(0,0,0,.20) 72%,
-    rgba(0,0,0,.06) 82%,
-    transparent 92%);
+    black 28%,
+    rgba(0,0,0,.97) 40%,
+    rgba(0,0,0,.85) 52%,
+    rgba(0,0,0,.60) 64%,
+    rgba(0,0,0,.28) 75%,
+    rgba(0,0,0,.07) 86%,
+    transparent 95%);
   user-select:none;-webkit-user-drag:none;
 }
-.cav-img--a{animation:cavXfA 12s ease-in-out infinite}
-.cav-img--b{animation:cavXfB 12s ease-in-out infinite}
-@keyframes cavXfA{
-  0%,40%{opacity:1}
-  52%,90%{opacity:0}
-  100%{opacity:1}
-}
-@keyframes cavXfB{
-  0%,40%{opacity:0}
-  52%,90%{opacity:1}
-  100%{opacity:0}
+
+/* screen glow — blue light rising as laptop opens */
+.avs-screen-glow{
+  position:absolute;
+  width:68%;height:45%;
+  bottom:-2%;left:16%;
+  background:radial-gradient(ellipse at 50% 100%,
+    rgba(140,185,255,.42) 0%,
+    rgba(100,150,255,.16) 45%,
+    transparent 75%);
+  filter:blur(28px);
+  opacity:0;
+  pointer-events:none;
 }
 
-/* Atmospheric veil — site background dissolves imperfect mask edges */
-.cav-veil{
-  position:absolute;inset:-1%;
+/* edge veil — dissolves portrait edges into dark background */
+.avs-veil{
+  position:absolute;inset:-2%;
   pointer-events:none;
-  background:radial-gradient(ellipse 74% 90% at 50% 40%,
+  background:radial-gradient(ellipse 80% 90% at 50% 50%,
     transparent 0%,
     transparent 40%,
-    rgba(3,3,3,.06) 52%,
+    rgba(3,3,3,.07) 52%,
     rgba(3,3,3,.28) 64%,
-    rgba(3,3,3,.62) 75%,
-    rgba(3,3,3,.88) 85%,
-    #030303 95%);
+    rgba(3,3,3,.62) 76%,
+    rgba(3,3,3,.90) 87%,
+    #030303 96%);
 }
 
-/* Holographic shimmer — iridescent sweep every ~15s */
-.cav-holo{position:absolute;inset:0;overflow:hidden;pointer-events:none}
-.cav-holo::before{
-  content:'';position:absolute;
-  top:0;bottom:0;left:-80%;width:55%;
-  background:linear-gradient(90deg,
-    transparent 0%,
-    rgba(180,140,255,.032) 30%,
-    rgba(140,200,255,.048) 50%,
-    rgba(200,160,255,.028) 70%,
-    transparent 100%);
-  transform:skewX(-18deg);
-  animation:cavShimmer 15s ease-in-out 4s infinite;
-}
-@keyframes cavShimmer{
-  0%,100%{left:-80%;opacity:0}
-  6%{opacity:1}
-  40%{left:170%;opacity:.9}
-  45%{left:170%;opacity:0}
-}
-
-/* Scan line — rare horizontal sweep for holographic depth */
-.cav-scan{position:absolute;inset:0;overflow:hidden;pointer-events:none}
-.cav-scan::before{
-  content:'';position:absolute;
-  left:0;right:0;top:-2px;height:2px;
-  background:linear-gradient(90deg,
-    transparent 0%,
-    rgba(160,210,255,.09) 20%,
-    rgba(185,220,255,.14) 50%,
-    rgba(160,210,255,.09) 80%,
-    transparent 100%);
-  animation:cavScan 18s linear 7s infinite;
-}
-@keyframes cavScan{
-  0%,100%{top:-2px;opacity:0}
-  5%{opacity:.7}
-  80%{top:102%;opacity:.5}
-  85%{top:102%;opacity:0}
-}
-
-/* light-mode: screen blend on white bg inverts; hide avatar entirely */
-[data-theme="light"] .cine-av{opacity:0;pointer-events:none}
-
-[data-theme="light"] .pa-sphere{
-  background:
-    radial-gradient(circle at 34% 30%,
-      rgba(255,255,255,.12) 0%,
-      rgba(160,100,255,.14) 14%,
-      rgba(120,70,220,.10) 33%,
-      rgba(70,20,160,.07) 54%,
-      transparent 80%);
-  box-shadow:
-    0 0 60px rgba(120,70,255,.18),
-    0 0 120px rgba(90,40,200,.10),
-    inset 0 0 40px rgba(180,130,255,.08);
-}
-[data-theme="light"] .pa-halo-1{
-  background:radial-gradient(circle at 50% 48%,
-    rgba(120,70,240,.10) 0%,rgba(70,30,180,.06) 40%,transparent 70%);
-}
-[data-theme="light"] .pa-floor{
-  background:radial-gradient(ellipse at center,rgba(100,60,200,.12),transparent 70%);
-}
+/* light-mode: screen blend inverts on white bg; hide avatar entirely */
+[data-theme="light"] .av-stage{opacity:0;pointer-events:none}
 
 /* floating glass chips */
 .chip{
@@ -1325,44 +1072,16 @@ footer{
         <div class="orbit r2"><div class="orbit-track"><div class="orbit-dot"></div></div></div>
         <div class="orbit r3"><div class="orbit-track"><div class="orbit-dot"></div></div></div>
 
-        <div class="persona-orb" aria-hidden="true">
-          <div class="pa-halo pa-halo-1"></div>
-          <div class="pa-halo pa-halo-2"></div>
-          <div class="pa-halo pa-halo-3"></div>
-          <div class="pa-sphere"><div class="pa-inner"></div></div>
-          <div class="pa-rim"></div>
-          <div class="pa-rim2"></div>
-          <div class="pa-rays"></div>
-          <div class="pa-particles">
-            <i style="--x:22%;--y:17%;--s:3px;--o:.65;--d:9s;--dl:-2s"></i>
-            <i style="--x:73%;--y:11%;--s:2px;--o:.45;--d:12s;--dl:-5s"></i>
-            <i style="--x:84%;--y:39%;--s:4px;--o:.55;--d:7s;--dl:-1s"></i>
-            <i style="--x:79%;--y:73%;--s:2px;--o:.35;--d:13s;--dl:-7s"></i>
-            <i style="--x:29%;--y:81%;--s:3px;--o:.50;--d:10s;--dl:-4s"></i>
-            <i style="--x:11%;--y:61%;--s:2px;--o:.60;--d:8s;--dl:-3s"></i>
-            <i style="--x:54%;--y:7%;--s:5px;--o:.25;--d:15s;--dl:-6s"></i>
-            <i style="--x:91%;--y:54%;--s:2px;--o:.38;--d:11s;--dl:-8s"></i>
-            <i style="--x:44%;--y:89%;--s:3px;--o:.48;--d:9s;--dl:-2s"></i>
-            <i style="--x:17%;--y:34%;--s:2px;--o:.55;--d:12s;--dl:-5s"></i>
-            <i style="--x:63%;--y:88%;--s:2px;--o:.42;--d:10s;--dl:-3s"></i>
-            <i style="--x:38%;--y:4%;--s:3px;--o:.30;--d:14s;--dl:-9s"></i>
+        <div class="av-stage" aria-hidden="true">
+          <div class="avs-glow"></div>
+          <div class="avs-float">
+            <img class="avs-img" id="avsImg"
+                 src="assets/avatar/frame-26.jpg"
+                 alt="Junaid · JRK Studio"
+                 loading="eager" decoding="sync" />
           </div>
-          <div class="pa-floor"></div>
-          <!-- cinematic avatar: holographic composite, no canvas, no JS -->
-          <div class="cine-av">
-            <div class="cav-glow cav-glow--deep"></div>
-            <div class="cav-glow cav-glow--mid"></div>
-            <div class="cav-glow cav-glow--hot"></div>
-            <div class="cav-float">
-              <div class="cav-breath">
-                <img class="cav-img cav-img--a" src="assets/avatar/frame-00.jpg" alt="" decoding="async" loading="eager" />
-                <img class="cav-img cav-img--b" src="assets/avatar/frame-13.jpg" alt="" decoding="async" loading="eager" />
-              </div>
-            </div>
-            <div class="cav-veil"></div>
-            <div class="cav-holo"></div>
-            <div class="cav-scan"></div>
-          </div>
+          <div class="avs-screen-glow" id="avsScreenGlow"></div>
+          <div class="avs-veil"></div>
         </div>
 
         <div class="chip chip-1">
@@ -2138,6 +1857,103 @@ function resetForm() {
   document.getElementById('formSuccess').classList.remove('active');
   document.getElementById('formError').classList.remove('active');
 }
+</script>
+
+<!-- GSAP + ScrollTrigger for scroll-driven avatar sequence -->
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/ScrollTrigger.min.js"></script>
+
+<!-- Frame registry: Vite hashes src attrs; JS reads el.src for hashed URLs -->
+<div id="avFrames" style="display:none" aria-hidden="true">
+  <img src="assets/avatar/frame-00.jpg" loading="lazy" alt="">
+  <img src="assets/avatar/frame-01.jpg" loading="lazy" alt="">
+  <img src="assets/avatar/frame-02.jpg" loading="lazy" alt="">
+  <img src="assets/avatar/frame-03.jpg" loading="lazy" alt="">
+  <img src="assets/avatar/frame-04.jpg" loading="lazy" alt="">
+  <img src="assets/avatar/frame-05.jpg" loading="lazy" alt="">
+  <img src="assets/avatar/frame-06.jpg" loading="lazy" alt="">
+  <img src="assets/avatar/frame-07.jpg" loading="lazy" alt="">
+  <img src="assets/avatar/frame-08.jpg" loading="lazy" alt="">
+  <img src="assets/avatar/frame-09.jpg" loading="lazy" alt="">
+  <img src="assets/avatar/frame-10.jpg" loading="lazy" alt="">
+  <img src="assets/avatar/frame-11.jpg" loading="lazy" alt="">
+  <img src="assets/avatar/frame-12.jpg" loading="lazy" alt="">
+  <img src="assets/avatar/frame-13.jpg" loading="lazy" alt="">
+  <img src="assets/avatar/frame-14.jpg" loading="lazy" alt="">
+  <img src="assets/avatar/frame-15.jpg" loading="lazy" alt="">
+  <img src="assets/avatar/frame-16.jpg" loading="lazy" alt="">
+  <img src="assets/avatar/frame-17.jpg" loading="lazy" alt="">
+  <img src="assets/avatar/frame-18.jpg" loading="lazy" alt="">
+  <img src="assets/avatar/frame-19.jpg" loading="lazy" alt="">
+  <img src="assets/avatar/frame-20.jpg" loading="lazy" alt="">
+  <img src="assets/avatar/frame-21.jpg" loading="lazy" alt="">
+  <img src="assets/avatar/frame-22.jpg" loading="lazy" alt="">
+  <img src="assets/avatar/frame-23.jpg" loading="lazy" alt="">
+  <img src="assets/avatar/frame-24.jpg" loading="lazy" alt="">
+  <img src="assets/avatar/frame-25.jpg" loading="lazy" alt="">
+  <img src="assets/avatar/frame-26.jpg" loading="lazy" alt="">
+</div>
+
+<script>
+(function(){
+  var imgEl = document.getElementById('avsImg');
+  var glowEl = document.getElementById('avsScreenGlow');
+  if (!imgEl) return;
+
+  var frameEls = document.querySelectorAll('#avFrames img');
+  var srcs = Array.from(frameEls, function(el){ return el.src; });
+  var TOTAL = srcs.length; // 27 frames
+
+  // Pre-load first and last frames immediately; rest on idle
+  var preloaded = srcs.map(function(src, i){
+    var img = new Image();
+    if (i === 0 || i === 26) { img.src = src; }
+    else { (window.requestIdleCallback || function(fn){ setTimeout(fn,1); })(function(){ img.src = src; }); }
+    return img;
+  });
+
+  var current = 26;
+  function setFrame(n){
+    n = Math.max(0, Math.min(TOTAL - 1, Math.round(n)));
+    if (n === current) return;
+    current = n;
+    imgEl.src = srcs[n];
+  }
+  function setGlow(progress){
+    if (glowEl) glowEl.style.opacity = (progress * 0.50).toFixed(3);
+  }
+
+  // Respect reduced-motion: skip to open state
+  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches){
+    imgEl.src = srcs[0]; setGlow(1); return;
+  }
+
+  if (window.gsap && window.ScrollTrigger){
+    gsap.registerPlugin(ScrollTrigger);
+    ScrollTrigger.create({
+      trigger: '#top',
+      start: 'top top',
+      end: '+=75%',
+      scrub: 1.8,
+      onUpdate: function(st){
+        setFrame((TOTAL - 1) * (1 - st.progress));
+        setGlow(st.progress);
+      }
+    });
+  } else {
+    // Vanilla fallback if GSAP CDN fails
+    var heroEl = document.getElementById('top');
+    if (!heroEl) return;
+    var endScroll = heroEl.offsetHeight * 0.75;
+    function onScroll(){
+      var p = Math.min(1, Math.max(0, window.scrollY / endScroll));
+      setFrame((TOTAL - 1) * (1 - p));
+      setGlow(p);
+    }
+    window.addEventListener('scroll', onScroll, {passive: true});
+    onScroll();
+  }
+})();
 </script>
 
 </body>
