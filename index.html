@@ -541,50 +541,187 @@ section{padding:120px 24px;position:relative}
   50%{opacity:.9;transform:scaleX(.8)}
 }
 
-/* ── avatar portrait — screen-blended inside persona-orb stacking context ── */
-/* persona-orb's background:#030303 is the blend target.
-   Black JPG pixels → transparent (orb glow shows through).
-   Bright pixels (face/body) → luminous cinematic presence.
-   Two frames CSS-crossfade at 10s; no JS, no canvas, no src-swapping. */
-.av-wrap{
+/* ── cinematic avatar — holographic composite inside persona-orb ── */
+/* brightness(4.5) drives near-black JPG px to zero → transparent via screen.
+   9-stop mask + atmospheric veil = soft environmental dissolve, not cutout.
+   3 independent glow layers + float/breath/shimmer/scan = luxury motion. */
+.cine-av{
   position:absolute;inset:0;
   pointer-events:none;z-index:5;
-  animation:avFloat 14s ease-in-out -2s infinite;
-  will-change:transform;
 }
-@keyframes avFloat{
-  0%,100%{transform:translateY(0)}
-  50%{transform:translateY(-10px)}
+
+/* Atmospheric glow field — avatar as environmental light source */
+.cav-glow{position:absolute;border-radius:50%;pointer-events:none}
+.cav-glow--deep{
+  width:90%;height:105%;top:2%;left:5%;
+  background:radial-gradient(ellipse at 50% 40%,
+    rgba(120,70,240,.30) 0%,
+    rgba(90,45,200,.16) 35%,
+    rgba(60,25,150,.06) 60%,
+    transparent 80%);
+  filter:blur(38px);
+  animation:cavGlowDeep 22s ease-in-out -8s infinite;
 }
-.av-frame{
+.cav-glow--mid{
+  width:65%;height:78%;top:11%;left:17%;
+  background:radial-gradient(ellipse at 50% 38%,
+    rgba(160,100,255,.24) 0%,
+    rgba(110,60,210,.11) 40%,
+    transparent 72%);
+  filter:blur(22px);
+  animation:cavGlowMid 13s ease-in-out -3s infinite;
+}
+.cav-glow--hot{
+  width:38%;height:44%;top:13%;left:31%;
+  background:radial-gradient(ellipse at 50% 35%,
+    rgba(210,170,255,.20) 0%,
+    rgba(165,115,255,.08) 50%,
+    transparent 80%);
+  filter:blur(14px);
+  animation:cavGlowHot 7s ease-in-out -2s infinite;
+}
+@keyframes cavGlowDeep{
+  0%,100%{opacity:.75;transform:scale(1) translate(0,0)}
+  30%{opacity:1;transform:scale(1.07) translate(4px,-5px)}
+  65%{opacity:.55;transform:scale(.94) translate(-3px,7px)}
+}
+@keyframes cavGlowMid{
+  0%,100%{opacity:.8;transform:scale(1)}
+  40%{opacity:1;transform:scale(1.11)}
+  72%{opacity:.55;transform:scale(.91)}
+}
+@keyframes cavGlowHot{
+  0%,100%{opacity:.7;transform:scale(1)}
+  50%{opacity:1;transform:scale(1.08)}
+}
+
+/* Portrait — outer wrapper drives multi-axis float + micro-rotation */
+.cav-float{
+  position:absolute;inset:0;
+  animation:cavFloat 18s ease-in-out -4s infinite;
+}
+@keyframes cavFloat{
+  0%,100%{transform:translateY(0) translateX(0) rotate(0deg)}
+  18%{transform:translateY(-11px) translateX(2.5px) rotate(.25deg)}
+  42%{transform:translateY(-19px) translateX(-2.5px) rotate(-.3deg)}
+  65%{transform:translateY(-13px) translateX(3px) rotate(.2deg)}
+  83%{transform:translateY(-5px) translateX(-1.5px) rotate(-.15deg)}
+}
+
+/* Portrait — inner wrapper drives subtle breathing scale */
+.cav-breath{
+  position:absolute;inset:0;
+  animation:cavBreath 9s ease-in-out -1.5s infinite;
+}
+@keyframes cavBreath{
+  0%,100%{transform:scale(1)}
+  45%{transform:scale(1.022)}
+  80%{transform:scale(.995)}
+}
+
+/* Avatar images — screen-composited, 9-stop atmospheric mask */
+.cav-img{
   position:absolute;inset:0;
   width:100%;height:100%;
   object-fit:contain;
-  object-position:50% 44%;
+  object-position:50% 40%;
   mix-blend-mode:screen;
-  filter:brightness(2.9) contrast(1.75) saturate(1.08)
-         drop-shadow(0 22px 44px rgba(110,60,210,.4));
-  -webkit-mask-image:radial-gradient(ellipse 78% 90% at 50% 44%,
-    black 40%, rgba(0,0,0,.5) 58%, transparent 100%);
-  mask-image:radial-gradient(ellipse 78% 90% at 50% 44%,
-    black 40%, rgba(0,0,0,.5) 58%, transparent 100%);
+  filter:brightness(4.5) contrast(2.0) saturate(1.05)
+         drop-shadow(0 0 22px rgba(140,90,255,.70))
+         drop-shadow(0 0 55px rgba(110,60,220,.38))
+         drop-shadow(0 0 95px rgba(80,35,180,.18));
+  -webkit-mask-image:radial-gradient(ellipse 68% 82% at 50% 40%,
+    black 0%,
+    black 20%,
+    rgba(0,0,0,.97) 32%,
+    rgba(0,0,0,.88) 42%,
+    rgba(0,0,0,.70) 52%,
+    rgba(0,0,0,.45) 62%,
+    rgba(0,0,0,.20) 72%,
+    rgba(0,0,0,.06) 82%,
+    transparent 92%);
+  mask-image:radial-gradient(ellipse 68% 82% at 50% 40%,
+    black 0%,
+    black 20%,
+    rgba(0,0,0,.97) 32%,
+    rgba(0,0,0,.88) 42%,
+    rgba(0,0,0,.70) 52%,
+    rgba(0,0,0,.45) 62%,
+    rgba(0,0,0,.20) 72%,
+    rgba(0,0,0,.06) 82%,
+    transparent 92%);
   user-select:none;-webkit-user-drag:none;
 }
-.av-f0 { animation:avA 10s ease-in-out infinite; }
-.av-f13{ animation:avB 10s ease-in-out infinite; }
-@keyframes avA{
+.cav-img--a{animation:cavXfA 12s ease-in-out infinite}
+.cav-img--b{animation:cavXfB 12s ease-in-out infinite}
+@keyframes cavXfA{
   0%,40%{opacity:1}
-  50%,90%{opacity:0}
+  52%,90%{opacity:0}
   100%{opacity:1}
 }
-@keyframes avB{
+@keyframes cavXfB{
   0%,40%{opacity:0}
-  50%,90%{opacity:1}
+  52%,90%{opacity:1}
   100%{opacity:0}
 }
-/* light-mode: screen blend on white bg makes everything white; hide avatar,
-   persona-orb handles the visual on its own */
-[data-theme="light"] .av-wrap{opacity:0;pointer-events:none}
+
+/* Atmospheric veil — site background dissolves imperfect mask edges */
+.cav-veil{
+  position:absolute;inset:-1%;
+  pointer-events:none;
+  background:radial-gradient(ellipse 74% 90% at 50% 40%,
+    transparent 0%,
+    transparent 40%,
+    rgba(3,3,3,.06) 52%,
+    rgba(3,3,3,.28) 64%,
+    rgba(3,3,3,.62) 75%,
+    rgba(3,3,3,.88) 85%,
+    #030303 95%);
+}
+
+/* Holographic shimmer — iridescent sweep every ~15s */
+.cav-holo{position:absolute;inset:0;overflow:hidden;pointer-events:none}
+.cav-holo::before{
+  content:'';position:absolute;
+  top:0;bottom:0;left:-80%;width:55%;
+  background:linear-gradient(90deg,
+    transparent 0%,
+    rgba(180,140,255,.032) 30%,
+    rgba(140,200,255,.048) 50%,
+    rgba(200,160,255,.028) 70%,
+    transparent 100%);
+  transform:skewX(-18deg);
+  animation:cavShimmer 15s ease-in-out 4s infinite;
+}
+@keyframes cavShimmer{
+  0%,100%{left:-80%;opacity:0}
+  6%{opacity:1}
+  40%{left:170%;opacity:.9}
+  45%{left:170%;opacity:0}
+}
+
+/* Scan line — rare horizontal sweep for holographic depth */
+.cav-scan{position:absolute;inset:0;overflow:hidden;pointer-events:none}
+.cav-scan::before{
+  content:'';position:absolute;
+  left:0;right:0;top:-2px;height:2px;
+  background:linear-gradient(90deg,
+    transparent 0%,
+    rgba(160,210,255,.09) 20%,
+    rgba(185,220,255,.14) 50%,
+    rgba(160,210,255,.09) 80%,
+    transparent 100%);
+  animation:cavScan 18s linear 7s infinite;
+}
+@keyframes cavScan{
+  0%,100%{top:-2px;opacity:0}
+  5%{opacity:.7}
+  80%{top:102%;opacity:.5}
+  85%{top:102%;opacity:0}
+}
+
+/* light-mode: screen blend on white bg inverts; hide avatar entirely */
+[data-theme="light"] .cine-av{opacity:0;pointer-events:none}
 
 [data-theme="light"] .pa-sphere{
   background:
@@ -1211,10 +1348,20 @@ footer{
             <i style="--x:38%;--y:4%;--s:3px;--o:.30;--d:14s;--dl:-9s"></i>
           </div>
           <div class="pa-floor"></div>
-          <!-- avatar: 2-frame CSS crossfade, screen-blended against orb backdrop -->
-          <div class="av-wrap">
-            <img class="av-frame av-f0"  src="assets/avatar/frame-00.jpg" alt="" decoding="async" />
-            <img class="av-frame av-f13" src="assets/avatar/frame-13.jpg" alt="" decoding="async" />
+          <!-- cinematic avatar: holographic composite, no canvas, no JS -->
+          <div class="cine-av">
+            <div class="cav-glow cav-glow--deep"></div>
+            <div class="cav-glow cav-glow--mid"></div>
+            <div class="cav-glow cav-glow--hot"></div>
+            <div class="cav-float">
+              <div class="cav-breath">
+                <img class="cav-img cav-img--a" src="assets/avatar/frame-00.jpg" alt="" decoding="async" loading="eager" />
+                <img class="cav-img cav-img--b" src="assets/avatar/frame-13.jpg" alt="" decoding="async" loading="eager" />
+              </div>
+            </div>
+            <div class="cav-veil"></div>
+            <div class="cav-holo"></div>
+            <div class="cav-scan"></div>
           </div>
         </div>
 
