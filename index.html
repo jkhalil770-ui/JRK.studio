@@ -1,4 +1,4 @@
-﻿<!doctype html>
+<!doctype html>
 <html lang="en">
 <head>
 <meta charset="utf-8" />
@@ -14,8 +14,8 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
-<link rel="preload" href="assets/avatar/frame-26.jpg" as="image" fetchpriority="high">
-<link rel="preload" href="assets/avatar/frame-00.jpg" as="image">
+<link rel="preload" href="assets/avatar/frame-00.jpg" as="image" fetchpriority="high">
+<link rel="preload" href="assets/avatar/frame-26.jpg" as="image">
 
 <style>
 /* =====================================================================
@@ -174,11 +174,40 @@ body{
 }
 
 /* ============= CURSOR (desktop) ============= */
-.cursor,.cursor-dot{position:fixed;top:0;left:0;pointer-events:none;z-index:9999;mix-blend-mode:screen;transform:translate(-50%,-50%);will-change:transform}
-.cursor{width:42px;height:42px;border:1px solid rgba(255,255,255,.2);border-radius:50%;transition:transform .25s var(--ease),width .25s var(--ease),height .25s var(--ease),border-color .25s}
-.cursor-dot{width:6px;height:6px;background:#fff;border-radius:50%;transition:transform .1s linear}
-.cursor.hover{width:72px;height:72px;border-color:#fff;background:rgba(255,255,255,.05);backdrop-filter:blur(4px)}
-@media (hover:none){.cursor,.cursor-dot{display:none}}
+.cursor, .cursor-dot {
+  position:fixed; top:0; left:0;
+  pointer-events:none; z-index:9999;
+  transform:translate(-50%, -50%);
+  will-change:transform;
+}
+.cursor {
+  width:26px; height:26px;
+  border:1px solid rgba(255,255,255,0.15);
+  border-radius:50%;
+  box-shadow:0 0 12px rgba(255,255,255,0.03);
+  transition:width 0.4s var(--ease-out), height 0.4s var(--ease-out), border-color 0.4s var(--ease-out), background 0.4s var(--ease-out);
+}
+.cursor-dot {
+  width:4px; height:4px;
+  background:#fff;
+  border-radius:50%;
+  box-shadow:0 0 8px rgba(255,255,255,0.4);
+  transition:opacity 0.4s var(--ease-out), width 0.4s var(--ease-out), height 0.4s var(--ease-out);
+}
+.cursor.hover {
+  width:44px; height:44px;
+  border-color:rgba(255,255,255,0.25);
+  background:rgba(255,255,255,0.04);
+  backdrop-filter:blur(3px);
+  -webkit-backdrop-filter:blur(3px);
+}
+.cursor-dot.hover {
+  width:6px; height:6px;
+  opacity:0.85;
+}
+@media (hover:none) {
+  .cursor, .cursor-dot { display:none; }
+}
 
 /* ============= NAV ============= */
 .nav{
@@ -312,8 +341,27 @@ section{padding:120px 24px;position:relative}
 @keyframes rise{to{transform:translateY(0)}}
 
 .hero-sub{
-  max-width:520px;color:var(--ink-soft);font-size:17px;line-height:1.6;
-  opacity:0;transform:translateY(20px);animation:fadeUp .8s var(--ease-out) .55s forwards;
+  max-width:560px;
+  color:rgba(228,228,231,.85);
+  font-family:var(--font-sans);
+  font-size:17.5px;
+  font-weight:400;
+  line-height:1.8;
+  letter-spacing:-.01em;
+  opacity:0;
+  transform:translateY(24px);
+  filter:blur(8px);
+  animation:heroSubReveal 1.6s cubic-bezier(.16,1,.3,1) .6s forwards;
+}
+.hero-sub em{
+  font-family:'Instrument Serif',serif;
+  font-style:italic;
+  font-size:21px;
+  color:#fff;
+  letter-spacing:0;
+}
+@keyframes heroSubReveal{
+  to{opacity:1;transform:translateY(0);filter:blur(0)}
 }
 @keyframes fadeUp{to{opacity:1;transform:translateY(0)}}
 
@@ -336,8 +384,8 @@ section{padding:120px 24px;position:relative}
 .stage{
   position:relative;
   width:100%;
-  aspect-ratio:1/1.05;
-  max-width:560px;
+  aspect-ratio:1/1.15;
+  max-width:580px;
   margin:0 auto;
   perspective:1500px;
   transform-style:preserve-3d;
@@ -345,7 +393,8 @@ section{padding:120px 24px;position:relative}
 .stage-inner{
   position:absolute;inset:0;
   transform-style:preserve-3d;
-  will-change:transform;
+  /* will-change removed: was creating GPU layer that blocked transparent canvas pixels
+     from showing the fixed page backdrop (grid/aurora) through */
   transition:transform .25s var(--ease-out);
 }
 
@@ -394,34 +443,35 @@ section{padding:120px 24px;position:relative}
 .orbit.r3 .orbit-track{animation-duration:18s}
 
 /* ── avatar stage — scroll-driven 27-frame sequence ── */
-/* Stage bg: radial gradient — solid #030303 at center (needed for screen-blend
-   to erase JPEG black bg), fades transparent at edges so hero atmosphere bleeds
-   through. contrast(1.8) pushes JPEG compression artifacts to pure black. */
+/* av-stage is fully transparent — hero atmosphere, orbit rings, glow-planet
+   all show through. avs-bg provides the dark oval substrate ONLY where the
+   avatar is, so mix-blend-mode:screen can erase the JPEG black background
+   without painting a visible dark rectangle over the hero. */
 .av-stage{
   position:absolute;inset:0;
   pointer-events:none;z-index:2;
-  background:radial-gradient(ellipse 76% 88% at 50% 50%,
-    #030303 0%,
-    #030303 42%,
-    rgba(3,3,3,.96) 55%,
-    rgba(3,3,3,.76) 66%,
-    rgba(3,3,3,.40) 78%,
-    rgba(3,3,3,.12) 88%,
-    transparent 97%);
+  /* no background */
+}
+
+/* dark compositing substrate — transparent, screen blend handles bg removal */
+.avs-bg{
+  position:absolute;inset:0;
+  pointer-events:none;
+  background:transparent;
 }
 
 /* deep atmospheric halo — avatar as environmental light source */
 .avs-glow{
   position:absolute;
-  width:92%;height:98%;
-  top:1%;left:4%;
+  width:100%;height:100%;
+  top:0%;left:0%;
   border-radius:50%;
-  background:radial-gradient(ellipse at 50% 54%,
-    rgba(110,65,225,.22) 0%,
-    rgba(80,42,175,.11) 38%,
-    rgba(50,20,120,.05) 62%,
-    transparent 80%);
-  filter:blur(52px);
+  background:radial-gradient(ellipse at 50% 60%,
+    rgba(120,70,240,.28) 0%,
+    rgba(90,48,190,.14) 35%,
+    rgba(60,25,140,.06) 58%,
+    transparent 75%);
+  filter:blur(60px);
   animation:avsGlowPulse 11s ease-in-out infinite;
 }
 @keyframes avsGlowPulse{
@@ -429,54 +479,54 @@ section{padding:120px 24px;position:relative}
   50%{opacity:1;transform:scale(1.06)}
 }
 
-/* float — primary idle cinematic drift */
+/* float — organic cinematic drift with micro-rotation */
 .avs-float{
   position:absolute;inset:0;
-  animation:avsFloat 7s ease-in-out infinite;
+  animation:avsFloat 9s ease-in-out infinite;
 }
 @keyframes avsFloat{
-  0%,100%{transform:translateY(0) translateX(0)}
-  33%{transform:translateY(-11px) translateX(2px)}
-  66%{transform:translateY(-9px) translateX(-2px)}
+  0%  {transform:translateY(0)     translateX(0)    rotate(0)}
+  22% {transform:translateY(-10px) translateX(2.5px) rotate(.12deg)}
+  52% {transform:translateY(-15px) translateX(1px)  rotate(-.09deg)}
+  78% {transform:translateY(-7px)  translateX(-2px) rotate(.07deg)}
+  100%{transform:translateY(0)     translateX(0)    rotate(0)}
 }
 
-/* breath — nested subtle scale pulse, offset from float */
+/* breath — chest expansion + subtle Y shift, offset phase */
 .avs-breath{
   position:absolute;inset:0;
-  animation:avsBreath 9s ease-in-out -2.5s infinite;
+  animation:avsBreath 11s ease-in-out -3.2s infinite;
 }
 @keyframes avsBreath{
-  0%,100%{transform:scale(1)}
-  45%{transform:scale(1.016)}
-  75%{transform:scale(.997)}
+  0%,100%{transform:scale(1)     translateY(0)}
+  40%    {transform:scale(1.019) translateY(-1.5px)}
+  70%    {transform:scale(.996)  translateY(.8px)}
 }
 
-/* portrait — screen-composited with contrast boost for JPEG bg removal */
+/* portrait canvas — screen blend erases residual dark JPEG pixels */
 .avs-img{
   position:absolute;inset:0;
   width:100%;height:100%;
+  display:block;
   object-fit:contain;
-  object-position:50% 50%;
   mix-blend-mode:screen;
-  filter:brightness(1.14) contrast(1.80) saturate(1.10);
-  -webkit-mask-image:radial-gradient(ellipse 80% 90% at 50% 50%,
+  filter:brightness(1.05) saturate(1.18);
+  -webkit-mask-image:radial-gradient(ellipse 80% 92% at 50% 46%,
     black 0%,
-    black 26%,
-    rgba(0,0,0,.97) 40%,
-    rgba(0,0,0,.82) 54%,
-    rgba(0,0,0,.52) 66%,
-    rgba(0,0,0,.20) 77%,
-    rgba(0,0,0,.05) 87%,
-    transparent 94%);
-  mask-image:radial-gradient(ellipse 80% 90% at 50% 50%,
+    black 35%,
+    rgba(0,0,0,.98) 48%,
+    rgba(0,0,0,.82) 60%,
+    rgba(0,0,0,.48) 72%,
+    rgba(0,0,0,.14) 82%,
+    transparent 90%);
+  mask-image:radial-gradient(ellipse 80% 92% at 50% 46%,
     black 0%,
-    black 26%,
-    rgba(0,0,0,.97) 40%,
-    rgba(0,0,0,.82) 54%,
-    rgba(0,0,0,.52) 66%,
-    rgba(0,0,0,.20) 77%,
-    rgba(0,0,0,.05) 87%,
-    transparent 94%);
+    black 35%,
+    rgba(0,0,0,.98) 48%,
+    rgba(0,0,0,.82) 60%,
+    rgba(0,0,0,.48) 72%,
+    rgba(0,0,0,.14) 82%,
+    transparent 90%);
   user-select:none;-webkit-user-drag:none;
 }
 
@@ -507,52 +557,109 @@ section{padding:120px 24px;position:relative}
 /* screen glow — blue laptop light rises as laptop opens (driven by JS) */
 .avs-screen-glow{
   position:absolute;
-  width:72%;height:52%;
-  bottom:-5%;left:14%;
+  width:80%;height:58%;
+  bottom:-8%;left:10%;
   background:radial-gradient(ellipse at 50% 100%,
-    rgba(135,185,255,.36) 0%,
-    rgba(100,148,255,.13) 44%,
-    transparent 70%);
-  filter:blur(30px);
+    rgba(120,180,255,.50) 0%,
+    rgba(90,148,255,.22) 40%,
+    rgba(60,100,220,.08) 60%,
+    transparent 75%);
+  filter:blur(36px);
   opacity:0;pointer-events:none;
+  transition:opacity .25s ease;
 }
 
-/* veil — atmospheric edge falloff aligns with av-stage bg gradient */
-.avs-veil{
-  position:absolute;inset:-4%;
-  pointer-events:none;
-  background:radial-gradient(ellipse 76% 86% at 50% 50%,
-    transparent 0%,
-    transparent 34%,
-    rgba(3,3,3,.04) 46%,
-    rgba(3,3,3,.18) 58%,
-    rgba(3,3,3,.50) 70%,
-    rgba(3,3,3,.80) 82%,
-    #030303 92%);
+/* slow counter-rotating rim lights — cinematic atmospheric halos */
+.avs-rim,.avs-rim-2{
+  position:absolute;inset:-18%;border-radius:50%;
+  pointer-events:none;mix-blend-mode:screen;
 }
+.avs-rim{
+  background:conic-gradient(
+    from 0deg,
+    transparent 0deg,transparent 62deg,
+    rgba(160,100,255,.05) 84deg,
+    rgba(195,138,255,.13) 108deg,
+    rgba(160,100,255,.05) 130deg,
+    transparent 150deg,transparent 360deg);
+  animation:rimSpin 24s linear infinite;
+  filter:blur(22px);
+}
+.avs-rim-2{
+  background:conic-gradient(
+    from 195deg,
+    transparent 0deg,transparent 55deg,
+    rgba(90,152,255,.04) 75deg,
+    rgba(128,192,255,.09) 96deg,
+    rgba(90,152,255,.04) 116deg,
+    transparent 136deg,transparent 360deg);
+  animation:rimSpin 34s linear infinite reverse;
+  filter:blur(30px);
+}
+@keyframes rimSpin{to{transform:rotate(360deg)}}
+
+.avs-veil{display:none}
 
 /* light-mode: screen blend inverts on white bg; hide avatar entirely */
 [data-theme="light"] .av-stage{opacity:0;pointer-events:none}
 
-/* floating glass chips */
+/* floating glass chips — premium glassmorphism */
 .chip{
-  position:absolute;z-index:4;display:flex;align-items:center;gap:10px;
-  padding:10px 14px;border-radius:14px;
-  background:rgba(20,20,20,.6);border:1px solid rgba(255,255,255,.12);
-  backdrop-filter:blur(14px);
-  box-shadow:0 18px 40px -12px rgba(0,0,0,.6);
-  font-size:12.5px;color:#e4e4e7;
+  position:absolute;z-index:4;
+  display:flex;align-items:center;gap:14px;
+  padding:10px 20px 10px 10px;border-radius:999px;
+  background:rgba(10,10,15,.6);
+  border:1px solid rgba(255,255,255,.08);
+  backdrop-filter:blur(40px) saturate(200%);
+  -webkit-backdrop-filter:blur(40px) saturate(200%);
+  box-shadow:
+    0 0 0 1px rgba(255,255,255,.04) inset,
+    0 24px 48px -12px rgba(0,0,0,.6),
+    0 0 40px -15px rgba(120,80,240,.15);
+  font-size:12px;color:rgba(228,228,231,.88);
+  overflow:hidden;
 }
-.chip svg{width:18px;height:18px}
-.chip-1{top:8%;left:-6%;animation:floatChip 6s var(--ease-out) infinite}
-.chip-2{top:42%;right:-10%;animation:floatChip 7s var(--ease-out) infinite -2s}
-.chip-3{bottom:14%;left:-4%;animation:floatChip 8s var(--ease-out) infinite -4s}
-@keyframes floatChip{
-  0%,100%{transform:translateY(0) rotate(-1deg)}
-  50%{transform:translateY(-12px) rotate(1deg)}
+.chip::before{
+  content:'';position:absolute;inset:0;border-radius:inherit;pointer-events:none;
+  background:linear-gradient(135deg, rgba(255,255,255,.1) 0%, transparent 40%, rgba(255,255,255,.02) 100%);
 }
-.chip strong{color:#fff;font-weight:600}
-.chip small{color:var(--ink-mute);font-size:11px}
+.chip::after{
+  content:'';position:absolute;inset:-1px;border-radius:inherit;pointer-events:none;
+  background:linear-gradient(135deg, rgba(255,255,255,.2) 0%, transparent 30%, transparent 70%, rgba(255,255,255,.1) 100%);
+  -webkit-mask:linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite:xor;
+  mask-composite:exclude;
+  padding:1px;
+}
+.chip .icon-wrap{
+  width:36px;height:36px;border-radius:50%;
+  display:grid;place-items:center;position:relative;
+  background:rgba(255,255,255,.03);
+  box-shadow:inset 0 0 0 1px rgba(255,255,255,.1);
+}
+.chip .icon-wrap::before{
+  content:'';position:absolute;inset:2px;border-radius:50%;
+  background:inherit;filter:blur(4px);z-index:-1;
+  opacity:0.6;
+}
+.chip-1 .icon-wrap{background:radial-gradient(circle at 30% 30%,rgba(163,123,255,.2),transparent 70%);}
+.chip-2 .icon-wrap{background:radial-gradient(circle at 30% 30%,rgba(255,122,217,.2),transparent 70%);}
+.chip-3 .icon-wrap{background:radial-gradient(circle at 30% 30%,rgba(110,224,255,.2),transparent 70%);}
+
+.chip svg{width:16px;height:16px;flex-shrink:0;position:relative}
+.chip-1{top:12%;left:-8%;animation:chipFloat 8s ease-in-out infinite}
+.chip-2{top:46%;right:-12%;animation:chipFloat 9s ease-in-out -4s infinite}
+.chip-3{bottom:18%;left:-6%;animation:chipFloat 7s ease-in-out -2s infinite}
+@keyframes chipFloat{
+  0%,100%{transform:translateY(0) rotate(0deg)}
+  50%{transform:translateY(-12px) rotate(1.5deg)}
+}
+.chip strong{color:rgba(255,255,255,1);font-weight:600;font-size:13px;position:relative;font-family:'Inter',sans-serif;letter-spacing:-.01em;}
+.chip small{color:rgba(161,161,170,.8);font-size:11px;letter-spacing:.02em;display:block;margin-top:1px;position:relative;font-family:'JetBrains Mono',monospace;text-transform:uppercase;}
+@keyframes chipReveal{
+  from{opacity:0;transform:translateY(12px) scale(.94)}
+  to{opacity:1;transform:translateY(0) scale(1)}
+}
 
 /* scroll cue */
 .scroll-cue{
@@ -1085,7 +1192,7 @@ footer{
       </h1>
 
       <p class="hero-sub">
-        I partner with ambitious founders to engineer web experiences that command attention. Bridging the gap between cinematic design and elite frontend architecture, I build digital flagships that feel less like software and more like luxury products.
+        I craft cinematic digital experiences powered by modern frontend engineering, intelligent automation, and immersive motion design — creating products that feel less like websites and more like <em>living systems.</em>
       </p>
 
       <div class="hero-actions">
@@ -1117,12 +1224,12 @@ footer{
 
         <div class="av-stage" aria-hidden="true">
           <div class="avs-glow"></div>
+          <div class="avs-rim"></div>
+          <div class="avs-rim-2"></div>
+          <div class="avs-bg"></div>
           <div class="avs-float">
             <div class="avs-breath">
-              <img class="avs-img" id="avsImg"
-                   src="assets/avatar/frame-26.jpg"
-                   alt="Junaid · JRK Studio"
-                   loading="eager" decoding="sync" />
+              <canvas class="avs-img" id="avsImg" aria-label="Junaid · JRK Studio"></canvas>
             </div>
           </div>
           <div class="avs-shimmer"></div>
@@ -1130,20 +1237,27 @@ footer{
           <div class="avs-veil"></div>
         </div>
 
-        <div class="chip chip-1">
-          <svg viewBox="0 0 24 24" fill="none" stroke="#a37bff" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a14 14 0 0 1 0 18M12 3a14 14 0 0 0 0 18"/></svg>
-          <div><strong>Three.js</strong><br><small>WebGL · GPU</small></div>
-        </div>
-        <div class="chip chip-2">
-          <svg viewBox="0 0 24 24" fill="none" stroke="#ff7ad9" stroke-width="2"><path d="M4 7l8 4 8-4M4 7l8-4 8 4M4 7v10l8 4 8-4V7"/></svg>
-          <div><strong>Next.js 15</strong><br><small>Edge · RSC</small></div>
-        </div>
-        <div class="chip chip-3">
-          <svg viewBox="0 0 24 24" fill="none" stroke="#6ee0ff" stroke-width="2"><path d="M12 2v20M2 12h20M5 5l14 14M19 5L5 19"/></svg>
-          <div><strong>Motion</strong><br><small>GSAP · Framer</small></div>
-        </div>
-
       </div>
+      <!-- Chips: outside stage-inner so they're unaffected by the mask -->
+      <div class="chip chip-1">
+        <div class="icon-wrap">
+          <svg viewBox="0 0 24 24" fill="none" stroke="#a37bff" stroke-width="2.5"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a14 14 0 0 1 0 18M12 3a14 14 0 0 0 0 18"/></svg>
+        </div>
+        <div><strong>Three.js</strong><small>WebGL / GPU</small></div>
+      </div>
+      <div class="chip chip-2">
+        <div class="icon-wrap">
+          <svg viewBox="0 0 24 24" fill="none" stroke="#ff7ad9" stroke-width="2.5"><path d="M4 7l8 4 8-4M4 7l8-4 8 4M4 7v10l8 4 8-4V7"/></svg>
+        </div>
+        <div><strong>Next.js 15</strong><small>Edge / RSC</small></div>
+      </div>
+      <div class="chip chip-3">
+        <div class="icon-wrap">
+          <svg viewBox="0 0 24 24" fill="none" stroke="#6ee0ff" stroke-width="2.5"><path d="M12 2v20M2 12h20M5 5l14 14M19 5L5 19"/></svg>
+        </div>
+        <div><strong>Motion</strong><small>GSAP / Framer</small></div>
+      </div>
+
     </div>
 
   </div>
@@ -1646,17 +1760,38 @@ footer{
 
 <script>
 /* ============================================================
-   Custom cursor
+   Premium Magnetic Cursor
 ============================================================ */
 (function(){
   const c=document.querySelector('.cursor'), d=document.querySelector('.cursor-dot');
-  if(matchMedia('(hover:none)').matches){c.remove();d.remove();return}
-  let mx=0,my=0,cx=0,cy=0;
-  addEventListener('mousemove',e=>{mx=e.clientX;my=e.clientY;d.style.transform=`translate(${mx-3}px,${my-3}px)`});
-  (function loop(){cx+=(mx-cx)*.18;cy+=(my-cy)*.18;c.style.transform=`translate(${cx-21}px,${cy-21}px)`;requestAnimationFrame(loop)})();
-  document.querySelectorAll('a,button,.svc-card,.proj,.t-card,.tech-pill').forEach(el=>{
-    el.addEventListener('mouseenter',()=>c.classList.add('hover'));
-    el.addEventListener('mouseleave',()=>c.classList.remove('hover'));
+  if(!c||!d||matchMedia('(hover:none)').matches){if(c)c.remove();if(d)d.remove();return}
+  let mx=window.innerWidth/2, my=window.innerHeight/2;
+  let cx=mx, cy=my, dx=mx, dy=my;
+  let hoverEl=null, isHover=false;
+  
+  addEventListener('mousemove',e=>{mx=e.clientX;my=e.clientY;});
+  
+  (function loop(){
+    let tx=mx, ty=my;
+    if(isHover && hoverEl){
+      const r=hoverEl.getBoundingClientRect();
+      tx = mx + ((r.left + r.width/2) - mx) * 0.4;
+      ty = my + ((r.top + r.height/2) - my) * 0.4;
+      cx += ((mx + ((r.left+r.width/2)-mx)*0.1) - cx) * 0.15;
+      cy += ((my + ((r.top+r.height/2)-my)*0.1) - cy) * 0.15;
+    } else {
+      cx+=(mx-cx)*0.15; cy+=(my-cy)*0.15;
+    }
+    dx+=(tx-dx)*0.45; dy+=(ty-dy)*0.45;
+    
+    d.style.transform=`translate3d(${dx}px,${dy}px,0) translate(-50%,-50%)`;
+    c.style.transform=`translate3d(${cx}px,${cy}px,0) translate(-50%,-50%)`;
+    requestAnimationFrame(loop);
+  })();
+  
+  document.querySelectorAll('a,button,.svc-card,.proj,.t-card,.tech-pill,.chip,.marquee-item').forEach(el=>{
+    el.addEventListener('mouseenter',()=>{isHover=true;hoverEl=el;c.classList.add('hover');d.classList.add('hover');});
+    el.addEventListener('mouseleave',()=>{isHover=false;hoverEl=null;c.classList.remove('hover');d.classList.remove('hover');});
   });
 })();
 
@@ -1941,82 +2076,177 @@ function resetForm() {
 </div>
 
 <script>
+/* ============================================================
+   Canvas-based avatar — chroma-key removes black JPEG bg
+   Gives true transparency: no mix-blend-mode, no rectangle
+============================================================ */
 (function(){
-  var imgEl    = document.getElementById('avsImg');
-  var glowEl   = document.getElementById('avsScreenGlow');
-  var stageEl  = document.querySelector('.av-stage');
-  if (!imgEl) return;
+  var cvs    = document.getElementById('avsImg');
+  var glowEl = document.getElementById('avsScreenGlow');
+  var stageEl= document.querySelector('.av-stage');
+  if (!cvs || !cvs.getContext) return;
 
+  var ctx = cvs.getContext('2d', {willReadFrequently: true});
   var frameEls = document.querySelectorAll('#avFrames img');
   var srcs = Array.from(frameEls, function(el){ return el.src; });
-  var TOTAL = srcs.length; // 27
+  var TOTAL = srcs.length;
 
-  // Pre-load key frames immediately; rest on idle
-  srcs.forEach(function(src, i){
+  // Cache of processed ImageBitmap (or HTMLImageElement fallback)
+  var cache = new Array(TOTAL);
+  var W = 0, H = 0;
+  var currentFrame = -1;
+
+  /* Chroma-key: make near-black pixels transparent */
+  function chromaKey(imgEl) {
+    var w = imgEl.naturalWidth  || imgEl.width  || 820;
+    var h = imgEl.naturalHeight || imgEl.height || 1024;
+    if (!W) { W = w; H = h; cvs.width = W; cvs.height = H; }
+    var off = document.createElement('canvas');
+    off.width = w; off.height = h;
+    var oc = off.getContext('2d', {willReadFrequently: true});
+    oc.drawImage(imgEl, 0, 0);
+    var id = oc.getImageData(0, 0, w, h);
+    var d  = id.data;
+    var THRESH = 55;
+    for (var p = 0; p < d.length; p += 4) {
+      var lum = (d[p] + d[p+1] + d[p+2]) / 3;
+      if (lum < THRESH) d[p+3] = Math.round((lum / THRESH) * d[p+3]);
+    }
+    oc.putImageData(id, 0, 0);
+    return off; /* return offscreen canvas as image source */
+  }
+
+  function drawFrame(n) {
+    n = Math.max(0, Math.min(TOTAL-1, Math.round(n)));
+    if (!cache[n]) return;
+    if (n === currentFrame) return;
+    currentFrame = n;
+    ctx.clearRect(0, 0, cvs.width, cvs.height);
+    ctx.drawImage(cache[n], 0, 0, cvs.width, cvs.height);
+  }
+
+  /* openness: 1 = laptop open (top of page), 0 = laptop closed (scrolled) */
+  function setGlow(openness){
+    if (glowEl) glowEl.style.opacity = (openness * 0.55).toFixed(3);
+  }
+
+  /* Load + process a single frame, call cb when done */
+  function loadFrame(idx, cb) {
     var img = new Image();
-    if (i === 0 || i === 26) { img.src = src; }
-    else { (window.requestIdleCallback || function(fn){ setTimeout(fn,1); })(function(){ img.src = src; }); }
+    img.onload = function() {
+      cache[idx] = chromaKey(img);
+      if (idx === 0) { /* initial frame (laptop open): paint immediately */
+        cvs.width  = cache[idx].width;
+        cvs.height = cache[idx].height;
+        ctx.clearRect(0, 0, cvs.width, cvs.height);
+        ctx.drawImage(cache[idx], 0, 0);
+        currentFrame = 0;
+      }
+      if (cb) cb();
+    };
+    img.src = srcs[idx];
+  }
+
+  /* Reduced-motion */
+  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches){
+    loadFrame(0, function(){ drawFrame(0); setGlow(1); });
+    return;
+  }
+
+  /* Load frame 0 first (laptop OPEN = initial state), then 26, then rest */
+  loadFrame(0, function(){
+    loadFrame(26, function(){
+      var idle = window.requestIdleCallback || function(fn){ setTimeout(fn, 80); };
+      var i = 1;
+      function loadNext(){
+        if (i >= TOTAL) return;
+        if (i === 0) { i++; loadNext(); return; }
+        loadFrame(i++, function(){ idle(loadNext); });
+      }
+      idle(loadNext);
+    });
   });
 
-  var current = 26;
-  function setFrame(n){
-    n = Math.max(0, Math.min(TOTAL - 1, Math.round(n)));
-    if (n === current) return;
-    current = n;
-    imgEl.src = srcs[n];
-  }
-  function setGlow(p){ if (glowEl) glowEl.style.opacity = (p * 0.48).toFixed(3); }
+  /* ── Scroll animation: laptop closes on scroll down ── */
+  var glowDomeEl = document.querySelector('.avs-glow');
+  var stageWrapEl= document.querySelector('.stage');
+  var chipEls    = Array.from(document.querySelectorAll('.chip'));
+  var heroEl     = document.getElementById('top');
 
-  // Reduced-motion: snap to open state immediately
-  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches){
-    imgEl.src = srcs[0]; setGlow(1); return;
-  }
-
-  if (window.gsap && window.ScrollTrigger){
-    gsap.registerPlugin(ScrollTrigger);
-
-    // Primary: scroll-driven frame sequence (laptop closed → open)
-    ScrollTrigger.create({
-      trigger: '#top',
-      start: 'top top',
-      end: '+=75%',
-      scrub: 1.8,
-      onUpdate: function(st){
-        setFrame((TOTAL - 1) * (1 - st.progress));
-        setGlow(st.progress);
-      }
+  function updateScroll(){
+    if(!heroEl) return;
+    var p = Math.min(1, Math.max(0, window.scrollY / (heroEl.offsetHeight * 0.8)));
+    /* p=0 → frame 0 (laptop OPEN), p=1 → frame 26 (laptop CLOSED) */
+    drawFrame(Math.round((TOTAL - 1) * p));
+    setGlow(1 - p);
+    var openness = 1 - p;
+    if(glowDomeEl){
+      glowDomeEl.style.opacity  = (0.45 + openness * 0.7).toFixed(3);
+      glowDomeEl.style.transform= 'scale(' + (1 + openness * 0.08).toFixed(3) + ')';
+    }
+    if(stageWrapEl){
+      stageWrapEl.style.transform = 'translateY('+(-p*40)+'px) scale('+(1-p*0.07)+')';
+    }
+    chipEls.forEach(function(el, i){
+      var chipP = Math.min(1, p / (0.28 + i * 0.1));
+      el.style.opacity = (1 - chipP).toFixed(3);
     });
-
-    // Parallax: stage drifts up slightly as user scrolls — adds cinematic depth.
-    // Applied to av-stage itself (already the stacking context) so screen-blend
-    // within it is not disrupted by creating a new compositing isolation layer.
-    if (stageEl) {
-      gsap.to(stageEl, {
-        y: -24,
-        ease: 'none',
-        scrollTrigger: {
-          trigger: '#top',
-          start: 'top top',
-          end: '+=120%',
-          scrub: 2.5,
-        }
-      });
-    }
-
-  } else {
-    // Vanilla fallback
-    var heroEl = document.getElementById('top');
-    if (!heroEl) return;
-    var endScroll = heroEl.offsetHeight * 0.75;
-    function onScroll(){
-      var p = Math.min(1, Math.max(0, window.scrollY / endScroll));
-      setFrame((TOTAL - 1) * (1 - p));
-      setGlow(p);
-      if (stageEl) stageEl.style.transform = 'translateY(' + (-p * 24) + 'px)';
-    }
-    window.addEventListener('scroll', onScroll, {passive: true});
-    onScroll();
   }
+
+  window.addEventListener('scroll', updateScroll, {passive:true});
+  updateScroll();
+
+  /* DEBUG OVERLAY — removed */
+
+  /* GSAP parallax on top if available */
+  if(window.gsap && window.ScrollTrigger){
+    gsap.registerPlugin(ScrollTrigger);
+  }
+})();
+</script>
+
+<script>
+
+/* ── Hero cinematic particles ── */
+(function(){
+  if(window.matchMedia('(prefers-reduced-motion:reduce)').matches) return;
+  var hero=document.getElementById('top');
+  if(!hero) return;
+  var cvs=document.createElement('canvas');
+  cvs.style.cssText='position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-index:1;opacity:.7;';
+  hero.style.position='relative';
+  hero.appendChild(cvs);
+  var ctx=cvs.getContext('2d'), W,H,pts=[];
+  var COLS=['rgba(175,125,255,','rgba(115,168,255,','rgba(210,175,255,','rgba(255,255,255,'];
+  function resize(){W=cvs.width=hero.offsetWidth;H=cvs.height=hero.offsetHeight;}
+  resize();
+  for(var i=0;i<40;i++) pts.push(mk());
+  function mk(){
+    return{
+      x:Math.random()*W, y:Math.random()*H,
+      r:.35+Math.random()*1.15,
+      vx:(Math.random()-.5)*.11,
+      vy:-.04-Math.random()*.16,
+      a:.06+Math.random()*.28,
+      col:COLS[0|Math.random()*4],
+      ph:Math.random()*6.28,
+      sp:.003+Math.random()*.008
+    };
+  }
+  function frame(){
+    ctx.clearRect(0,0,W,H);
+    for(var i=0;i<pts.length;i++){
+      var p=pts[i]; p.x+=p.vx; p.y+=p.vy; p.ph+=p.sp;
+      var a=p.a*(.55+.45*Math.sin(p.ph));
+      if(p.y<-4){p.y=H+4;p.x=Math.random()*W;}
+      if(p.x<-4)p.x=W+4; if(p.x>W+4)p.x=-4;
+      ctx.beginPath();ctx.arc(p.x,p.y,p.r,0,6.28);
+      ctx.fillStyle=p.col+a.toFixed(3)+')';ctx.fill();
+    }
+    requestAnimationFrame(frame);
+  }
+  frame();
+  window.addEventListener('resize',resize,{passive:true});
 })();
 </script>
 
