@@ -14,6 +14,8 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="preload" href="assets/avatar/frame-00.jpg" as="image">
+<link rel="preload" href="assets/avatar/frame-13.jpg" as="image">
 
 <style>
 /* =====================================================================
@@ -397,6 +399,9 @@ section{padding:120px 24px;position:relative}
   display:grid;place-items:center;
   pointer-events:none;overflow:hidden;
   z-index:2;
+  /* background required: gives mix-blend-mode: screen a dark target so
+     the avatar JPG's black areas become transparent inside this context */
+  background:var(--bg,#030303);
 }
 
 /* atmospheric halos */
@@ -535,6 +540,51 @@ section{padding:120px 24px;position:relative}
   0%,100%{opacity:.5;transform:scaleX(1)}
   50%{opacity:.9;transform:scaleX(.8)}
 }
+
+/* ── avatar portrait — screen-blended inside persona-orb stacking context ── */
+/* persona-orb's background:#030303 is the blend target.
+   Black JPG pixels → transparent (orb glow shows through).
+   Bright pixels (face/body) → luminous cinematic presence.
+   Two frames CSS-crossfade at 10s; no JS, no canvas, no src-swapping. */
+.av-wrap{
+  position:absolute;inset:0;
+  pointer-events:none;z-index:5;
+  animation:avFloat 14s ease-in-out -2s infinite;
+  will-change:transform;
+}
+@keyframes avFloat{
+  0%,100%{transform:translateY(0)}
+  50%{transform:translateY(-10px)}
+}
+.av-frame{
+  position:absolute;inset:0;
+  width:100%;height:100%;
+  object-fit:contain;
+  object-position:50% 44%;
+  mix-blend-mode:screen;
+  filter:brightness(2.9) contrast(1.75) saturate(1.08)
+         drop-shadow(0 22px 44px rgba(110,60,210,.4));
+  -webkit-mask-image:radial-gradient(ellipse 78% 90% at 50% 44%,
+    black 40%, rgba(0,0,0,.5) 58%, transparent 100%);
+  mask-image:radial-gradient(ellipse 78% 90% at 50% 44%,
+    black 40%, rgba(0,0,0,.5) 58%, transparent 100%);
+  user-select:none;-webkit-user-drag:none;
+}
+.av-f0 { animation:avA 10s ease-in-out infinite; }
+.av-f13{ animation:avB 10s ease-in-out infinite; }
+@keyframes avA{
+  0%,40%{opacity:1}
+  50%,90%{opacity:0}
+  100%{opacity:1}
+}
+@keyframes avB{
+  0%,40%{opacity:0}
+  50%,90%{opacity:1}
+  100%{opacity:0}
+}
+/* light-mode: screen blend on white bg makes everything white; hide avatar,
+   persona-orb handles the visual on its own */
+[data-theme="light"] .av-wrap{opacity:0;pointer-events:none}
 
 [data-theme="light"] .pa-sphere{
   background:
@@ -1161,6 +1211,11 @@ footer{
             <i style="--x:38%;--y:4%;--s:3px;--o:.30;--d:14s;--dl:-9s"></i>
           </div>
           <div class="pa-floor"></div>
+          <!-- avatar: 2-frame CSS crossfade, screen-blended against orb backdrop -->
+          <div class="av-wrap">
+            <img class="av-frame av-f0"  src="assets/avatar/frame-00.jpg" alt="" decoding="async" />
+            <img class="av-frame av-f13" src="assets/avatar/frame-13.jpg" alt="" decoding="async" />
+          </div>
         </div>
 
         <div class="chip chip-1">
