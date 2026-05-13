@@ -391,81 +391,170 @@ section{padding:120px 24px;position:relative}
 .orbit.r2 .orbit-track{animation-duration:9s;animation-direction:reverse}
 .orbit.r3 .orbit-track{animation-duration:18s}
 
-/* avatar — true transparent PNG (processed in JS), lives inside hero atmosphere */
-.avatar-wrap{
+/* ── persona orb — pure CSS cinematic presence, no images/canvas ── */
+.persona-orb{
   position:absolute;inset:0;
   display:grid;place-items:center;
-  transform-style:preserve-3d;
-  pointer-events:none;
-}
-/* ambient violet bloom behind the character — atmospheric, not a frame */
-.avatar-glow{
-  position:absolute;width:140%;height:140%;left:-20%;top:-20%;
-  border-radius:50%;
-  background:
-    radial-gradient(circle at 50% 45%,
-      rgba(255,255,255,.08) 0%,
-      rgba(200,200,200,.04) 35%,
-      rgba(100,100,100,.01) 65%,
-      transparent 80%);
-  filter:blur(80px);
-  animation:glowPulse 12s ease-in-out infinite;
-  z-index:0;
-  pointer-events:none;
-}
-@keyframes glowPulse{
-  0%,100%{opacity:.85;transform:scale(1)}
-  50%{opacity:1;transform:scale(1.04)}
-}
-.avatar-stack{
-  position:absolute;inset:0;
-  animation:floatY 14s ease-in-out infinite;
-  will-change:transform;
+  pointer-events:none;overflow:hidden;
   z-index:2;
 }
-@keyframes floatY{
-  0%,100%{transform:translateY(0)}
-  50%{transform:translateY(-6px)}
+
+/* atmospheric halos */
+.pa-halo{position:absolute;border-radius:50%;pointer-events:none}
+.pa-halo-1{
+  width:88%;height:88%;
+  background:radial-gradient(circle at 50% 48%,
+    rgba(140,90,255,.12) 0%,rgba(80,40,200,.07) 40%,transparent 70%);
+  filter:blur(50px);
+  animation:paHalo 14s ease-in-out infinite;
 }
-.avatar-img{
-  position:absolute;inset:0;width:100%;height:100%;
-  object-fit:contain;
-  object-position:50% 48%;
-  /* soft oval vignette eliminates rectangular JPG boundary — no canvas needed */
-  -webkit-mask-image:radial-gradient(ellipse 84% 92% at 50% 46%, black 42%, rgba(0,0,0,.6) 62%, transparent 100%);
-  mask-image:radial-gradient(ellipse 84% 92% at 50% 46%, black 42%, rgba(0,0,0,.6) 62%, transparent 100%);
-  filter:saturate(1.05) brightness(1.08) contrast(1.06)
-         drop-shadow(0 28px 36px rgba(0,0,0,.65));
-  user-select:none;-webkit-user-drag:none;
-  opacity:1;
+.pa-halo-2{
+  width:115%;height:115%;
+  background:radial-gradient(circle at 56% 44%,
+    rgba(200,150,255,.06) 0%,rgba(100,50,180,.03) 35%,transparent 65%);
+  filter:blur(70px);
+  animation:paHalo 19s ease-in-out 4s infinite reverse;
 }
-[data-theme="light"] .avatar-img{
-  filter:saturate(0.9) brightness(.95) contrast(1.05)
-         drop-shadow(0 22px 28px rgba(0,0,0,.15));
+.pa-halo-3{
+  width:65%;height:65%;
+  background:radial-gradient(circle at 44% 38%,
+    rgba(255,210,160,.05) 0%,rgba(200,140,80,.02) 45%,transparent 70%);
+  filter:blur(28px);
+  animation:paHalo 10s ease-in-out 2s infinite;
 }
-[data-theme="light"] .avatar-glow{
-  background:radial-gradient(circle at 50% 42%,
-    rgba(0,0,0,.08) 0%,
-    rgba(0,0,0,.04) 30%,
-    rgba(0,0,0,.02) 55%,
-    transparent 72%);
-}
-[data-theme="light"] .avatar-floor{
-  background:radial-gradient(ellipse at center, rgba(0,0,0,.08), transparent 70%);
+@keyframes paHalo{
+  0%,100%{opacity:.7;transform:scale(1)}
+  50%{opacity:1;transform:scale(1.09)}
 }
 
-/* subtle floor ambient — anchors the character to the scene */
-.avatar-floor{
-  position:absolute;left:25%;right:25%;bottom:8%;height:22px;
+/* central sphere */
+.pa-sphere{
+  position:absolute;width:54%;aspect-ratio:1;border-radius:50%;
+  background:
+    radial-gradient(circle at 34% 30%,
+      rgba(255,255,255,.09) 0%,
+      rgba(200,160,255,.13) 14%,
+      rgba(140,90,240,.09) 33%,
+      rgba(80,30,180,.06) 54%,
+      rgba(20,5,60,.03) 72%,
+      transparent 85%);
+  box-shadow:
+    0 0 70px rgba(140,90,255,.22),
+    0 0 140px rgba(100,50,200,.12),
+    0 0 240px rgba(80,30,160,.07),
+    inset 0 0 50px rgba(200,160,255,.07);
+  animation:paSphereFloat 14s ease-in-out infinite;
+  will-change:transform;
+}
+.pa-sphere::before{
+  content:'';position:absolute;
+  width:38%;height:28%;top:11%;left:16%;
   border-radius:50%;
-  background:radial-gradient(ellipse at center, rgba(255,255,255,.08), transparent 70%);
+  background:radial-gradient(ellipse,rgba(255,255,255,.18),transparent 70%);
+  filter:blur(7px);
+}
+.pa-sphere::after{
+  content:'';position:absolute;inset:-1px;border-radius:50%;
+  border:1px solid rgba(180,140,255,.16);
+  box-shadow:0 0 26px rgba(160,110,255,.11);
+}
+@keyframes paSphereFloat{
+  0%,100%{transform:translateY(0) scale(1)}
+  50%{transform:translateY(-10px) scale(1.015)}
+}
+
+/* inner core pulse */
+.pa-inner{
+  position:absolute;inset:22%;border-radius:50%;
+  background:radial-gradient(circle,rgba(220,190,255,.10),transparent 70%);
+  animation:paInner 8s ease-in-out infinite;
+}
+@keyframes paInner{
+  0%,100%{opacity:.5;transform:scale(1)}
+  50%{opacity:1;transform:scale(1.12)}
+}
+
+/* outer rim rings */
+.pa-rim{
+  position:absolute;width:63%;aspect-ratio:1;border-radius:50%;
+  border:1px solid rgba(160,110,255,.15);
+  box-shadow:0 0 30px rgba(140,90,255,.09);
+  animation:paRim 11s ease-in-out infinite;
+  will-change:transform;
+}
+.pa-rim2{
+  position:absolute;width:76%;aspect-ratio:1;border-radius:50%;
+  border:1px solid rgba(140,90,255,.07);
+  animation:paRim 17s ease-in-out 3s infinite reverse;
+  will-change:transform;
+}
+@keyframes paRim{
+  0%,100%{transform:scale(1);opacity:.7}
+  50%{transform:scale(1.05);opacity:1}
+}
+
+/* conic light rays — barely visible, cinematic depth */
+.pa-rays{
+  position:absolute;inset:-20%;pointer-events:none;
+  background:conic-gradient(from 220deg at 50% 48%,
+    transparent 0deg,rgba(160,110,255,.016) 8deg,transparent 20deg,
+    transparent 62deg,rgba(140,90,255,.013) 70deg,transparent 82deg,
+    transparent 130deg,rgba(180,130,255,.015) 139deg,transparent 150deg,
+    transparent 200deg,rgba(160,100,255,.011) 208deg,transparent 220deg);
+  animation:paRaysRotate 45s linear infinite;
+}
+@keyframes paRaysRotate{to{transform:rotate(360deg)}}
+
+/* floating star particles */
+.pa-particles{position:absolute;inset:0;pointer-events:none}
+.pa-particles i{
+  position:absolute;border-radius:50%;font-style:normal;
+  left:var(--x);top:var(--y);
+  width:var(--s,2px);height:var(--s,2px);
+  background:rgba(255,255,255,var(--o,.5));
+  box-shadow:0 0 8px rgba(200,170,255,calc(var(--o,.5)*1.6));
+  animation:paParticle var(--d,9s) ease-in-out var(--dl,0s) infinite;
+  will-change:transform;
+}
+@keyframes paParticle{
+  0%,100%{transform:translate(0,0) scale(1);opacity:var(--o,.5)}
+  30%{transform:translate(-3px,-9px) scale(1.4);opacity:calc(var(--o,.5)*1.7)}
+  70%{transform:translate(4px,-5px) scale(.7);opacity:calc(var(--o,.5)*.55)}
+}
+
+/* floor glow */
+.pa-floor{
+  position:absolute;left:25%;right:25%;bottom:7%;height:20px;
+  border-radius:50%;
+  background:radial-gradient(ellipse at center,rgba(140,90,255,.16),transparent 70%);
   filter:blur(12px);
-  animation:floorBreath 14s ease-in-out infinite;
+  animation:paFloor 14s ease-in-out infinite;
   z-index:1;
 }
-@keyframes floorBreath{
-  0%,100%{opacity:.45;transform:scaleX(1)}
-  50%{opacity:.7;transform:scaleX(.9)}
+@keyframes paFloor{
+  0%,100%{opacity:.5;transform:scaleX(1)}
+  50%{opacity:.9;transform:scaleX(.8)}
+}
+
+[data-theme="light"] .pa-sphere{
+  background:
+    radial-gradient(circle at 34% 30%,
+      rgba(255,255,255,.12) 0%,
+      rgba(160,100,255,.14) 14%,
+      rgba(120,70,220,.10) 33%,
+      rgba(70,20,160,.07) 54%,
+      transparent 80%);
+  box-shadow:
+    0 0 60px rgba(120,70,255,.18),
+    0 0 120px rgba(90,40,200,.10),
+    inset 0 0 40px rgba(180,130,255,.08);
+}
+[data-theme="light"] .pa-halo-1{
+  background:radial-gradient(circle at 50% 48%,
+    rgba(120,70,240,.10) 0%,rgba(70,30,180,.06) 40%,transparent 70%);
+}
+[data-theme="light"] .pa-floor{
+  background:radial-gradient(ellipse at center,rgba(100,60,200,.12),transparent 70%);
 }
 
 /* floating glass chips */
@@ -1049,12 +1138,29 @@ footer{
         <div class="orbit r2"><div class="orbit-track"><div class="orbit-dot"></div></div></div>
         <div class="orbit r3"><div class="orbit-track"><div class="orbit-dot"></div></div></div>
 
-        <div class="avatar-wrap">
-          <div class="avatar-glow"></div>
-          <div class="avatar-stack">
-            <img class="avatar-img" id="avatarImg" src="assets/avatar/frame-00.jpg" alt="" />
+        <div class="persona-orb" aria-hidden="true">
+          <div class="pa-halo pa-halo-1"></div>
+          <div class="pa-halo pa-halo-2"></div>
+          <div class="pa-halo pa-halo-3"></div>
+          <div class="pa-sphere"><div class="pa-inner"></div></div>
+          <div class="pa-rim"></div>
+          <div class="pa-rim2"></div>
+          <div class="pa-rays"></div>
+          <div class="pa-particles">
+            <i style="--x:22%;--y:17%;--s:3px;--o:.65;--d:9s;--dl:-2s"></i>
+            <i style="--x:73%;--y:11%;--s:2px;--o:.45;--d:12s;--dl:-5s"></i>
+            <i style="--x:84%;--y:39%;--s:4px;--o:.55;--d:7s;--dl:-1s"></i>
+            <i style="--x:79%;--y:73%;--s:2px;--o:.35;--d:13s;--dl:-7s"></i>
+            <i style="--x:29%;--y:81%;--s:3px;--o:.50;--d:10s;--dl:-4s"></i>
+            <i style="--x:11%;--y:61%;--s:2px;--o:.60;--d:8s;--dl:-3s"></i>
+            <i style="--x:54%;--y:7%;--s:5px;--o:.25;--d:15s;--dl:-6s"></i>
+            <i style="--x:91%;--y:54%;--s:2px;--o:.38;--d:11s;--dl:-8s"></i>
+            <i style="--x:44%;--y:89%;--s:3px;--o:.48;--d:9s;--dl:-2s"></i>
+            <i style="--x:17%;--y:34%;--s:2px;--o:.55;--d:12s;--dl:-5s"></i>
+            <i style="--x:63%;--y:88%;--s:2px;--o:.42;--d:10s;--dl:-3s"></i>
+            <i style="--x:38%;--y:4%;--s:3px;--o:.30;--d:14s;--dl:-9s"></i>
           </div>
-          <div class="avatar-floor"></div>
+          <div class="pa-floor"></div>
         </div>
 
         <div class="chip chip-1">
@@ -1619,45 +1725,6 @@ footer{
   }
 })();
 
-/* ============================================================
-   Avatar — scroll-linked frame sequencer
-   CSS mask handles edge blending; raw JPGs used directly (no canvas).
-============================================================ */
-(function(){
-  var img=document.getElementById('avatarImg');
-  var hero=document.querySelector('.hero');
-  if(!img||!hero)return;
-
-  var N=27;
-  var sources=[];
-  for(var i=0;i<N;i++)sources.push('assets/avatar/frame-'+('0'+i).slice(-2)+'.jpg');
-
-  /* preload frames so src-swaps are instant */
-  for(var p=1;p<N;p++){var pi=new Image();pi.src=sources[p];}
-
-  var target=0,current=0,lastIdx=0;
-  var t0=performance.now();
-
-  function computeTarget(){
-    var r=hero.getBoundingClientRect();
-    var total=hero.offsetHeight||window.innerHeight;
-    target=Math.min(1,Math.max(0,-r.top/total));
-  }
-  window.addEventListener('scroll',computeTarget,{passive:true});
-  window.addEventListener('resize',computeTarget,{passive:true});
-  computeTarget();
-
-  function tick(now){
-    requestAnimationFrame(tick);
-    current+=(target-current)*0.09;
-    var eff=Math.min(1,Math.max(0,current+Math.sin((now-t0)*0.00045)*0.010));
-    var idx=Math.round(eff*(N-1));
-    if(idx===lastIdx)return;
-    img.src=sources[idx];
-    lastIdx=idx;
-  }
-  requestAnimationFrame(tick);
-})();
 /* ============================================================
    Service card — 3D tilt + glow follow
 ============================================================ */
