@@ -429,20 +429,16 @@ section{padding:120px 24px;position:relative}
 }
 .avatar-img{
   position:absolute;inset:0;width:100%;height:100%;
-  /* contain keeps full head + torso visible at every scroll position — no crop */
   object-fit:contain;
-  object-position:50% 50%;
-  filter:saturate(1.02) brightness(1.05)
-         drop-shadow(0 24px 30px rgba(0,0,0,.5));
-  /* image is set by JS to a runtime-processed transparent PNG */
+  object-position:50% 48%;
+  /* soft oval vignette eliminates rectangular JPG boundary — no canvas needed */
+  -webkit-mask-image:radial-gradient(ellipse 84% 92% at 50% 46%, black 42%, rgba(0,0,0,.6) 62%, transparent 100%);
+  mask-image:radial-gradient(ellipse 84% 92% at 50% 46%, black 42%, rgba(0,0,0,.6) 62%, transparent 100%);
+  filter:saturate(1.05) brightness(1.08) contrast(1.06)
+         drop-shadow(0 28px 36px rgba(0,0,0,.65));
   user-select:none;-webkit-user-drag:none;
-  /* start visible so fallback JPG shows if JS canvas processing fails */
   opacity:1;
-  transition:opacity .6s ease, filter .4s ease;
 }
-/* JS adds .processing while canvas work runs; hides raw JPG briefly */
-.avatar-img.processing{opacity:0}
-.avatar-img.ready{opacity:1}
 [data-theme="light"] .avatar-img{
   filter:saturate(0.9) brightness(.95) contrast(1.05)
          drop-shadow(0 22px 28px rgba(0,0,0,.15));
@@ -1624,13 +1620,8 @@ footer{
 })();
 
 /* ============================================================
-   Avatar — alpha-PNG processor + scroll-linked frame sequencing
-   RULES:
-   - img NEVER hidden (no .processing class, opacity stays 1)
-   - processed[0] pre-seeded = tick never reassigns frame-0 (no flash)
-   - lastIdx=0 at init = skips first tick when already at frame-0
-   - Data URL length-validated (empty canvas returns 'data:,' = 6 chars)
-   - onerror always stores raw JPG string — never null/false
+   Avatar — scroll-linked frame sequencer
+   CSS mask handles edge blending; raw JPGs used directly (no canvas).
 ============================================================ */
 (function(){
   var img=document.getElementById('avatarImg');
@@ -1641,55 +1632,11 @@ footer{
   var sources=[];
   for(var i=0;i<N;i++)sources.push('assets/avatar/frame-'+('0'+i).slice(-2)+'.jpg');
 
-  var processed=new Array(N).fill(null);
-  var loading=new Array(N).fill(false);
-  var LO=18,HI=72;
-
-  function processFrame(idx){
-    if(processed[idx]!==null||loading[idx])return;
-    loading[idx]=true;
-    var im=new Image();
-    im.onload=function(){
-      var url=sources[idx];
-      try{
-        var nw=im.naturalWidth||1,nh=im.naturalHeight||1;
-        var scale=Math.min(1,560/nw);
-        var w=Math.max(1,Math.round(nw*scale)),h=Math.max(1,Math.round(nh*scale));
-        var cv=document.createElement('canvas');
-        cv.width=w;cv.height=h;
-        var ctx=cv.getContext('2d',{willReadFrequently:true});
-        ctx.drawImage(im,0,0,w,h);
-        var d=ctx.getImageData(0,0,w,h),px=d.data;
-        for(var j=0;j<px.length;j+=4){
-          var lum=px[j]*0.299+px[j+1]*0.587+px[j+2]*0.114;
-          if(lum<LO)px[j+3]=0;
-          else if(lum<HI)px[j+3]=Math.round(((lum-LO)/(HI-LO))*255);
-        }
-        ctx.putImageData(d,0,0);
-        var c=cv.toDataURL('image/png');
-        if(c&&c.length>200)url=c;
-      }catch(e){}
-      processed[idx]=url;
-      loading[idx]=false;
-    };
-    im.onerror=function(){
-      processed[idx]=sources[idx];
-      loading[idx]=false;
-    };
-    im.src=sources[idx];
-  }
-
-  // Pre-seed frame-0 with its raw JPG path so the tick loop never sees null
-  // and never tries to reassign img.src before canvas processing completes.
-  processed[0]=sources[0];
-  img.classList.add('ready');
-
-  var idle=window.requestIdleCallback?window.requestIdleCallback.bind(window):function(cb){setTimeout(cb,16);};
-  var next=0;
-  function pump(){if(next<N){processFrame(next++);idle(pump);}}
-  idle(pump);
+  /* preload frames so src-swaps are instant */
+  for(var p=1;p<N;p++){var pi=new Image();pi.src=sources[p];}
 
   var target=0,current=0,lastIdx=0;
+  var t0=performance.now();
 
   function computeTarget(){
     var r=hero.getBoundingClientRect();
@@ -1700,16 +1647,14 @@ footer{
   window.addEventListener('resize',computeTarget,{passive:true});
   computeTarget();
 
-  var t0=performance.now();
   function tick(now){
     requestAnimationFrame(tick);
     current+=(target-current)*0.09;
     var eff=Math.min(1,Math.max(0,current+Math.sin((now-t0)*0.00045)*0.010));
     var idx=Math.round(eff*(N-1));
     if(idx===lastIdx)return;
-    img.src=processed[idx]||sources[idx];
+    img.src=sources[idx];
     lastIdx=idx;
-    if(!processed[idx])processFrame(idx);
   }
   requestAnimationFrame(tick);
 })();
