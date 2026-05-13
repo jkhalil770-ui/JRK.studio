@@ -394,98 +394,141 @@ section{padding:120px 24px;position:relative}
 .orbit.r3 .orbit-track{animation-duration:18s}
 
 /* ── avatar stage — scroll-driven 27-frame sequence ── */
-/* mix-blend-mode: screen on #030303 bg: black JPG px → transparent.
-   Frame 26 = laptop closed (initial), frame 00 = open (scroll target).
-   GSAP ScrollTrigger drives the sequence; CSS float is always-on idle. */
+/* Stage bg: radial gradient — solid #030303 at center (needed for screen-blend
+   to erase JPEG black bg), fades transparent at edges so hero atmosphere bleeds
+   through. contrast(1.8) pushes JPEG compression artifacts to pure black. */
 .av-stage{
   position:absolute;inset:0;
   pointer-events:none;z-index:2;
-  background:var(--bg,#030303);
+  background:radial-gradient(ellipse 76% 88% at 50% 50%,
+    #030303 0%,
+    #030303 42%,
+    rgba(3,3,3,.96) 55%,
+    rgba(3,3,3,.76) 66%,
+    rgba(3,3,3,.40) 78%,
+    rgba(3,3,3,.12) 88%,
+    transparent 97%);
 }
 
-/* ambient atmospheric halo */
+/* deep atmospheric halo — avatar as environmental light source */
 .avs-glow{
   position:absolute;
-  width:82%;height:90%;
-  top:5%;left:9%;
+  width:92%;height:98%;
+  top:1%;left:4%;
   border-radius:50%;
-  background:radial-gradient(ellipse at 50% 52%,
-    rgba(100,60,210,.22) 0%,
-    rgba(70,35,160,.11) 45%,
-    transparent 78%);
-  filter:blur(44px);
-  animation:avsGlowPulse 9s ease-in-out infinite;
+  background:radial-gradient(ellipse at 50% 54%,
+    rgba(110,65,225,.22) 0%,
+    rgba(80,42,175,.11) 38%,
+    rgba(50,20,120,.05) 62%,
+    transparent 80%);
+  filter:blur(52px);
+  animation:avsGlowPulse 11s ease-in-out infinite;
 }
 @keyframes avsGlowPulse{
-  0%,100%{opacity:.78;transform:scale(1)}
-  50%{opacity:1;transform:scale(1.07)}
+  0%,100%{opacity:.70;transform:scale(1)}
+  50%{opacity:1;transform:scale(1.06)}
 }
 
-/* float wrapper — idle cinematic motion */
+/* float — primary idle cinematic drift */
 .avs-float{
   position:absolute;inset:0;
-  animation:avsFloat 6s ease-in-out infinite;
+  animation:avsFloat 7s ease-in-out infinite;
 }
 @keyframes avsFloat{
-  0%,100%{transform:translateY(0)}
-  50%{transform:translateY(-14px)}
+  0%,100%{transform:translateY(0) translateX(0)}
+  33%{transform:translateY(-11px) translateX(2px)}
+  66%{transform:translateY(-9px) translateX(-2px)}
 }
 
-/* sequenced portrait image */
+/* breath — nested subtle scale pulse, offset from float */
+.avs-breath{
+  position:absolute;inset:0;
+  animation:avsBreath 9s ease-in-out -2.5s infinite;
+}
+@keyframes avsBreath{
+  0%,100%{transform:scale(1)}
+  45%{transform:scale(1.016)}
+  75%{transform:scale(.997)}
+}
+
+/* portrait — screen-composited with contrast boost for JPEG bg removal */
 .avs-img{
   position:absolute;inset:0;
   width:100%;height:100%;
   object-fit:contain;
   object-position:50% 50%;
   mix-blend-mode:screen;
-  filter:brightness(1.12) contrast(1.08) saturate(1.06);
-  -webkit-mask-image:radial-gradient(ellipse 83% 92% at 50% 50%,
+  filter:brightness(1.14) contrast(1.80) saturate(1.10);
+  -webkit-mask-image:radial-gradient(ellipse 80% 90% at 50% 50%,
     black 0%,
-    black 28%,
+    black 26%,
     rgba(0,0,0,.97) 40%,
-    rgba(0,0,0,.85) 52%,
-    rgba(0,0,0,.60) 64%,
-    rgba(0,0,0,.28) 75%,
-    rgba(0,0,0,.07) 86%,
-    transparent 95%);
-  mask-image:radial-gradient(ellipse 83% 92% at 50% 50%,
+    rgba(0,0,0,.82) 54%,
+    rgba(0,0,0,.52) 66%,
+    rgba(0,0,0,.20) 77%,
+    rgba(0,0,0,.05) 87%,
+    transparent 94%);
+  mask-image:radial-gradient(ellipse 80% 90% at 50% 50%,
     black 0%,
-    black 28%,
+    black 26%,
     rgba(0,0,0,.97) 40%,
-    rgba(0,0,0,.85) 52%,
-    rgba(0,0,0,.60) 64%,
-    rgba(0,0,0,.28) 75%,
-    rgba(0,0,0,.07) 86%,
-    transparent 95%);
+    rgba(0,0,0,.82) 54%,
+    rgba(0,0,0,.52) 66%,
+    rgba(0,0,0,.20) 77%,
+    rgba(0,0,0,.05) 87%,
+    transparent 94%);
   user-select:none;-webkit-user-drag:none;
 }
 
-/* screen glow — blue light rising as laptop opens */
-.avs-screen-glow{
-  position:absolute;
-  width:68%;height:45%;
-  bottom:-2%;left:16%;
-  background:radial-gradient(ellipse at 50% 100%,
-    rgba(140,185,255,.42) 0%,
-    rgba(100,150,255,.16) 45%,
-    transparent 75%);
-  filter:blur(28px);
-  opacity:0;
-  pointer-events:none;
+/* cinematic shimmer — rare iridescent sweep, ~16s cycle */
+.avs-shimmer{
+  position:absolute;inset:0;
+  overflow:hidden;pointer-events:none;z-index:3;
+}
+.avs-shimmer::before{
+  content:'';position:absolute;
+  top:0;bottom:0;left:-100%;width:55%;
+  background:linear-gradient(100deg,
+    transparent 0%,
+    rgba(195,160,255,.016) 35%,
+    rgba(165,210,255,.028) 50%,
+    rgba(195,160,255,.016) 65%,
+    transparent 100%);
+  transform:skewX(-14deg);
+  animation:avsShimmer 16s ease-in-out 5s infinite;
+}
+@keyframes avsShimmer{
+  0%,100%{left:-100%;opacity:0}
+  5%{opacity:1}
+  42%{left:170%;opacity:.85}
+  47%{opacity:0;left:170%}
 }
 
-/* edge veil — dissolves portrait edges into dark background */
+/* screen glow — blue laptop light rises as laptop opens (driven by JS) */
+.avs-screen-glow{
+  position:absolute;
+  width:72%;height:52%;
+  bottom:-5%;left:14%;
+  background:radial-gradient(ellipse at 50% 100%,
+    rgba(135,185,255,.36) 0%,
+    rgba(100,148,255,.13) 44%,
+    transparent 70%);
+  filter:blur(30px);
+  opacity:0;pointer-events:none;
+}
+
+/* veil — atmospheric edge falloff aligns with av-stage bg gradient */
 .avs-veil{
-  position:absolute;inset:-2%;
+  position:absolute;inset:-4%;
   pointer-events:none;
-  background:radial-gradient(ellipse 80% 90% at 50% 50%,
+  background:radial-gradient(ellipse 76% 86% at 50% 50%,
     transparent 0%,
-    transparent 40%,
-    rgba(3,3,3,.07) 52%,
-    rgba(3,3,3,.28) 64%,
-    rgba(3,3,3,.62) 76%,
-    rgba(3,3,3,.90) 87%,
-    #030303 96%);
+    transparent 34%,
+    rgba(3,3,3,.04) 46%,
+    rgba(3,3,3,.18) 58%,
+    rgba(3,3,3,.50) 70%,
+    rgba(3,3,3,.80) 82%,
+    #030303 92%);
 }
 
 /* light-mode: screen blend inverts on white bg; hide avatar entirely */
@@ -1075,11 +1118,14 @@ footer{
         <div class="av-stage" aria-hidden="true">
           <div class="avs-glow"></div>
           <div class="avs-float">
-            <img class="avs-img" id="avsImg"
-                 src="assets/avatar/frame-26.jpg"
-                 alt="Junaid · JRK Studio"
-                 loading="eager" decoding="sync" />
+            <div class="avs-breath">
+              <img class="avs-img" id="avsImg"
+                   src="assets/avatar/frame-26.jpg"
+                   alt="Junaid · JRK Studio"
+                   loading="eager" decoding="sync" />
+            </div>
           </div>
+          <div class="avs-shimmer"></div>
           <div class="avs-screen-glow" id="avsScreenGlow"></div>
           <div class="avs-veil"></div>
         </div>
@@ -1896,20 +1942,20 @@ function resetForm() {
 
 <script>
 (function(){
-  var imgEl = document.getElementById('avsImg');
-  var glowEl = document.getElementById('avsScreenGlow');
+  var imgEl    = document.getElementById('avsImg');
+  var glowEl   = document.getElementById('avsScreenGlow');
+  var stageEl  = document.querySelector('.av-stage');
   if (!imgEl) return;
 
   var frameEls = document.querySelectorAll('#avFrames img');
   var srcs = Array.from(frameEls, function(el){ return el.src; });
-  var TOTAL = srcs.length; // 27 frames
+  var TOTAL = srcs.length; // 27
 
-  // Pre-load first and last frames immediately; rest on idle
-  var preloaded = srcs.map(function(src, i){
+  // Pre-load key frames immediately; rest on idle
+  srcs.forEach(function(src, i){
     var img = new Image();
     if (i === 0 || i === 26) { img.src = src; }
     else { (window.requestIdleCallback || function(fn){ setTimeout(fn,1); })(function(){ img.src = src; }); }
-    return img;
   });
 
   var current = 26;
@@ -1919,17 +1965,17 @@ function resetForm() {
     current = n;
     imgEl.src = srcs[n];
   }
-  function setGlow(progress){
-    if (glowEl) glowEl.style.opacity = (progress * 0.50).toFixed(3);
-  }
+  function setGlow(p){ if (glowEl) glowEl.style.opacity = (p * 0.48).toFixed(3); }
 
-  // Respect reduced-motion: skip to open state
+  // Reduced-motion: snap to open state immediately
   if (window.matchMedia('(prefers-reduced-motion: reduce)').matches){
     imgEl.src = srcs[0]; setGlow(1); return;
   }
 
   if (window.gsap && window.ScrollTrigger){
     gsap.registerPlugin(ScrollTrigger);
+
+    // Primary: scroll-driven frame sequence (laptop closed → open)
     ScrollTrigger.create({
       trigger: '#top',
       start: 'top top',
@@ -1940,8 +1986,25 @@ function resetForm() {
         setGlow(st.progress);
       }
     });
+
+    // Parallax: stage drifts up slightly as user scrolls — adds cinematic depth.
+    // Applied to av-stage itself (already the stacking context) so screen-blend
+    // within it is not disrupted by creating a new compositing isolation layer.
+    if (stageEl) {
+      gsap.to(stageEl, {
+        y: -24,
+        ease: 'none',
+        scrollTrigger: {
+          trigger: '#top',
+          start: 'top top',
+          end: '+=120%',
+          scrub: 2.5,
+        }
+      });
+    }
+
   } else {
-    // Vanilla fallback if GSAP CDN fails
+    // Vanilla fallback
     var heroEl = document.getElementById('top');
     if (!heroEl) return;
     var endScroll = heroEl.offsetHeight * 0.75;
@@ -1949,6 +2012,7 @@ function resetForm() {
       var p = Math.min(1, Math.max(0, window.scrollY / endScroll));
       setFrame((TOTAL - 1) * (1 - p));
       setGlow(p);
+      if (stageEl) stageEl.style.transform = 'translateY(' + (-p * 24) + 'px)';
     }
     window.addEventListener('scroll', onScroll, {passive: true});
     onScroll();
