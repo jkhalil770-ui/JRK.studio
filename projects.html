@@ -4,31 +4,21 @@
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
 <meta name="theme-color" content="#030303" />
-<title>Junaid — Cinematic 3D Frontend Engineer · JRK Studio</title>
-<meta name="description" content="Junaid is a cinematic 3D frontend engineer crafting award-grade web experiences for founders, studios and ambitious brands. Based remote, serving worldwide." />
+<title>Projects — JRK Studio</title>
+<meta name="description" content="View the full archive of selected digital works and products crafted by Junaid at JRK Studio." />
 <meta name="robots" content="index, follow" />
-<meta property="og:title" content="Junaid — Cinematic 3D Frontend Engineer · JRK Studio" />
-<meta property="og:description" content="Crafting cinematic web worlds and premium frontend experiences." />
-<meta property="og:type" content="website" />
-<meta name="twitter:card" content="summary_large_image" />
-<meta name="twitter:title" content="Junaid — Cinematic 3D Frontend Engineer · JRK Studio" />
-<meta name="twitter:description" content="Crafting cinematic web worlds and premium frontend experiences." />
 <link rel="icon" type="image/svg+xml" href="favicon.svg">
 <link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png">
 <link rel="icon" type="image/png" sizes="16x16" href="favicon-16x16.png">
 <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
-<meta name="apple-mobile-web-app-title" content="JRK Studio">
-<link rel="manifest" href="site.webmanifest">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
-<link rel="preload" href="assets/avatar/frame-00.jpg" as="image" fetchpriority="high">
-<link rel="preload" href="assets/avatar/frame-26.jpg" as="image">
 
 <style>
 /* =====================================================================
    JRK STUDIO — TRENDING 3D PORTFOLIO
-   Premium, cinematic, Awwwards-style
+   Premium, cinematic, Awwwards-style CSS Styles
    ===================================================================== */
 
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
@@ -40,7 +30,6 @@ html{scroll-behavior:smooth;-webkit-text-size-adjust:100%}
 ::-webkit-scrollbar-thumb:hover{background:rgba(255,255,255,0.2)}
 
 :root{
-  /* THEME — defaults to dark */
   --bg:#030303;
   --bg-2:#050505;
   --ink:#ffffff;
@@ -235,6 +224,7 @@ body{
   transition:color .2s,background .2s;
 }
 .nav-links a:hover{color:#fff;background:rgba(255,255,255,.05)}
+.nav-links a.active{color:#fff;background:rgba(255,255,255,.08);font-weight:600}
 
 .nav-cta{display:flex;align-items:center;gap:8px}
 .nav-status{display:none;align-items:center;gap:6px;padding:7px 12px;border-radius:999px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);font-size:12px;color:#a1a1aa;font-family:'JetBrains Mono',monospace}
@@ -367,12 +357,10 @@ section{padding:120px 24px;position:relative}
 .stage-inner{
   position:absolute;inset:0;
   transform-style:preserve-3d;
-  /* will-change removed: was creating GPU layer that blocked transparent canvas pixels
-     from showing the fixed page backdrop (grid/aurora) through */
   transition:transform .25s var(--ease-out);
 }
 
-/* soft cinematic backdrop — NO hard dark sphere, just atmospheric color */
+/* soft backdrop glow */
 .glow-planet{
   position:absolute;inset:-50%;border-radius:50%;
   background:
@@ -391,7 +379,7 @@ section{padding:120px 24px;position:relative}
   50%{opacity:1;transform:translateZ(-80px) scale(1.06) rotate(180deg)}
 }
 
-/* orbit rings — subtle depth rings behind the persona orb */
+/* orbit rings */
 .orbit{
   position:absolute;inset:-6%;
   border-radius:50%;
@@ -416,25 +404,16 @@ section{padding:120px 24px;position:relative}
 .orbit.r2 .orbit-track{animation-duration:9s;animation-direction:reverse}
 .orbit.r3 .orbit-track{animation-duration:18s}
 
-/* ── avatar stage — scroll-driven 27-frame sequence ── */
-/* av-stage is fully transparent — hero atmosphere, orbit rings, glow-planet
-   all show through. avs-bg provides the dark oval substrate ONLY where the
-   avatar is, so mix-blend-mode:screen can erase the JPEG black background
-   without painting a visible dark rectangle over the hero. */
+/* ── video avatar stage ── */
 .av-stage{
   position:absolute;inset:0;
   pointer-events:none;z-index:2;
-  /* no background */
 }
-
-/* dark compositing substrate — transparent, screen blend handles bg removal */
 .avs-bg{
   position:absolute;inset:0;
   pointer-events:none;
   background:transparent;
 }
-
-/* deep atmospheric halo — avatar as environmental light source */
 .avs-glow{
   position:absolute;
   width:100%;height:100%;
@@ -453,7 +432,6 @@ section{padding:120px 24px;position:relative}
   50%{opacity:1;transform:scale(1.06)}
 }
 
-/* float — organic cinematic drift with micro-rotation */
 .avs-float{
   position:absolute;inset:0;
   animation:avsFloat 9s ease-in-out infinite;
@@ -466,7 +444,6 @@ section{padding:120px 24px;position:relative}
   100%{transform:translateY(0)     translateX(0)    rotate(0)}
 }
 
-/* breath — chest expansion + subtle Y shift, offset phase */
 .avs-breath{
   position:absolute;inset:0;
   animation:avsBreath 11s ease-in-out -3.2s infinite;
@@ -477,107 +454,31 @@ section{padding:120px 24px;position:relative}
   70%    {transform:scale(.996)  translateY(.8px)}
 }
 
-/* portrait canvas — screen blend erases residual dark JPEG pixels */
-.avs-img{
-  position:absolute;inset:0;
-  width:100%;height:100%;
-  display:block;
-  object-fit:contain;
-  mix-blend-mode:screen;
-  filter:brightness(1.05) saturate(1.18);
-  -webkit-mask-image:radial-gradient(ellipse 80% 92% at 50% 46%,
-    black 0%,
-    black 35%,
-    rgba(0,0,0,.98) 48%,
-    rgba(0,0,0,.82) 60%,
-    rgba(0,0,0,.48) 72%,
-    rgba(0,0,0,.14) 82%,
-    transparent 90%);
-  mask-image:radial-gradient(ellipse 80% 92% at 50% 46%,
-    black 0%,
-    black 35%,
-    rgba(0,0,0,.98) 48%,
-    rgba(0,0,0,.82) 60%,
-    rgba(0,0,0,.48) 72%,
-    rgba(0,0,0,.14) 82%,
-    transparent 90%);
-  user-select:none;-webkit-user-drag:none;
+/* avatar video element & wrapper */
+.avatar-video-wrap {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  /* clip-path to mask out bottom-right Gemini sparkle star */
+  clip-path: polygon(0% 0%, 100% 0%, 100% 92%, 0% 92%);
+  overflow: hidden;
 }
 
-/* cinematic shimmer — rare iridescent sweep, ~16s cycle */
-.avs-shimmer{
-  position:absolute;inset:0;
-  overflow:hidden;pointer-events:none;z-index:3;
-}
-.avs-shimmer::before{
-  content:'';position:absolute;
-  top:0;bottom:0;left:-100%;width:55%;
-  background:linear-gradient(100deg,
-    transparent 0%,
-    rgba(195,160,255,.016) 35%,
-    rgba(165,210,255,.028) 50%,
-    rgba(195,160,255,.016) 65%,
-    transparent 100%);
-  transform:skewX(-14deg);
-  animation:avsShimmer 16s ease-in-out 5s infinite;
-}
-@keyframes avsShimmer{
-  0%,100%{left:-100%;opacity:0}
-  5%{opacity:1}
-  42%{left:170%;opacity:.85}
-  47%{opacity:0;left:170%}
+.avs-video {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+  object-fit: contain;
+  mix-blend-mode: screen;
+  filter: brightness(1.05) saturate(1.18);
+  user-select: none;
+  -webkit-user-drag: none;
 }
 
-/* screen glow — blue laptop light rises as laptop opens (driven by JS) */
-.avs-screen-glow{
-  position:absolute;
-  width:80%;height:58%;
-  bottom:-8%;left:10%;
-  background:radial-gradient(ellipse at 50% 100%,
-    rgba(120,180,255,.50) 0%,
-    rgba(90,148,255,.22) 40%,
-    rgba(60,100,220,.08) 60%,
-    transparent 75%);
-  filter:blur(36px);
-  opacity:0;pointer-events:none;
-  transition:opacity .25s ease;
-}
-
-/* slow counter-rotating rim lights — cinematic atmospheric halos */
-.avs-rim,.avs-rim-2{
-  position:absolute;inset:-18%;border-radius:50%;
-  pointer-events:none;mix-blend-mode:screen;
-}
-.avs-rim{
-  background:conic-gradient(
-    from 0deg,
-    transparent 0deg,transparent 62deg,
-    rgba(160,100,255,.05) 84deg,
-    rgba(195,138,255,.13) 108deg,
-    rgba(160,100,255,.05) 130deg,
-    transparent 150deg,transparent 360deg);
-  animation:rimSpin 24s linear infinite;
-  filter:blur(22px);
-}
-.avs-rim-2{
-  background:conic-gradient(
-    from 195deg,
-    transparent 0deg,transparent 55deg,
-    rgba(90,152,255,.04) 75deg,
-    rgba(128,192,255,.09) 96deg,
-    rgba(90,152,255,.04) 116deg,
-    transparent 136deg,transparent 360deg);
-  animation:rimSpin 34s linear infinite reverse;
-  filter:blur(30px);
-}
-@keyframes rimSpin{to{transform:rotate(360deg)}}
-
-.avs-veil{display:none}
-
-/* light-mode: screen blend inverts on white bg; hide avatar entirely */
-[data-theme="light"] .av-stage{opacity:0;pointer-events:none}
-
-/* floating glass chips — premium glassmorphism */
+/* floating glass chips */
 .chip{
   position:absolute;z-index:4;
   display:flex;align-items:center;gap:14px;
@@ -611,11 +512,6 @@ section{padding:120px 24px;position:relative}
   background:rgba(255,255,255,.03);
   box-shadow:inset 0 0 0 1px rgba(255,255,255,.1);
 }
-.chip .icon-wrap::before{
-  content:'';position:absolute;inset:2px;border-radius:50%;
-  background:inherit;filter:blur(4px);z-index:-1;
-  opacity:0.6;
-}
 .chip-1 .icon-wrap{background:radial-gradient(circle at 30% 30%,rgba(163,123,255,.2),transparent 70%);}
 .chip-2 .icon-wrap{background:radial-gradient(circle at 30% 30%,rgba(255,122,217,.2),transparent 70%);}
 .chip-3 .icon-wrap{background:radial-gradient(circle at 30% 30%,rgba(110,224,255,.2),transparent 70%);}
@@ -630,98 +526,6 @@ section{padding:120px 24px;position:relative}
 }
 .chip strong{color:rgba(255,255,255,1);font-weight:600;font-size:13px;position:relative;font-family:'Inter',sans-serif;letter-spacing:-.01em;}
 .chip small{color:rgba(161,161,170,.8);font-size:11px;letter-spacing:.02em;display:block;margin-top:1px;position:relative;font-family:'JetBrains Mono',monospace;text-transform:uppercase;}
-@keyframes chipReveal{
-  from{opacity:0;transform:translateY(12px) scale(.94)}
-  to{opacity:1;transform:translateY(0) scale(1)}
-}
-
-/* scroll cue */
-.scroll-cue{
-  position:absolute;bottom:24px;left:50%;transform:translateX(-50%);
-  display:flex;flex-direction:column;align-items:center;gap:10px;
-  font-family:'JetBrains Mono',monospace;font-size:10.5px;color:var(--ink-mute);
-  text-transform:uppercase;letter-spacing:.2em;
-  opacity:0;animation:fadeUp 1s 1.4s forwards;
-}
-.scroll-cue .line{width:1px;height:42px;background:linear-gradient(180deg,transparent,var(--ink-soft));position:relative;overflow:hidden}
-.scroll-cue .line::after{content:"";position:absolute;top:-30%;left:0;width:1px;height:30%;background:#fff;animation:scrollLine 1.8s var(--ease-out) infinite}
-@keyframes scrollLine{to{top:130%}}
-
-/* ============= MARQUEE ============= */
-.marquee{
-  padding:36px 0;border-top:1px solid var(--hairline);border-bottom:1px solid var(--hairline);
-  overflow:hidden;position:relative;background:rgba(255,255,255,.015);
-}
-.marquee-track{display:flex;gap:64px;width:max-content;animation:marquee 30s linear infinite;align-items:center}
-@keyframes marquee{to{transform:translateX(-50%)}}
-.marquee-item{
-  display:flex;align-items:center;gap:14px;
-  font-family:'Instrument Serif',serif;font-size:32px;color:var(--ink-soft);
-  white-space:nowrap;
-}
-.marquee-item em{font-style:italic;color:var(--violet)}
-.marquee-item .sep{width:8px;height:8px;border-radius:50%;background:var(--violet);box-shadow:0 0 10px var(--violet)}
-
-/* ============= ABOUT ============= */
-.about{position:relative}
-.about-grid{display:grid;gap:48px;grid-template-columns:1fr;align-items:start}
-@media(min-width:880px){.about-grid{grid-template-columns:.9fr 1.1fr;gap:80px}}
-.about-lead{font-family:'Instrument Serif',serif;font-size:clamp(28px,3.6vw,46px);line-height:1.15;letter-spacing:-.01em;color:var(--ink)}
-.about-lead em{font-style:italic;color:var(--violet)}
-.about-body{color:var(--ink-soft);font-size:16.5px;line-height:1.75;margin-top:24px}
-.about-body p+p{margin-top:16px}
-.about-cards{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:36px}
-.about-card{
-  padding:18px;border-radius:18px;
-  background:var(--glass);border:1px solid var(--hairline);
-  backdrop-filter:blur(12px);
-}
-.about-card .k{font-family:'JetBrains Mono',monospace;font-size:10.5px;color:var(--ink-mute);text-transform:uppercase;letter-spacing:.16em}
-.about-card .v{font-family:'Instrument Serif',serif;font-size:28px;color:var(--ink);margin-top:6px;line-height:1}
-.about-card .v em{color:var(--violet);font-style:normal}
-
-/* ============= SERVICES (3D tilt cards) ============= */
-.services{position:relative}
-.services-head{display:flex;flex-direction:column;gap:20px;margin-bottom:60px}
-@media(min-width:880px){.services-head{flex-direction:row;align-items:flex-end;justify-content:space-between}}
-.services-head p{max-width:420px;color:var(--ink-soft);font-size:15.5px}
-.svc-grid{display:grid;gap:18px;grid-template-columns:1fr}
-@media(min-width:720px){.svc-grid{grid-template-columns:1fr 1fr}}
-@media(min-width:1080px){.svc-grid{grid-template-columns:repeat(3,1fr)}}
-.svc-card{
-  --tx:0deg;--ty:0deg;
-  position:relative;padding:30px 26px 28px;border-radius:24px;
-  background:var(--card-bg);
-  border:1px solid var(--hairline);
-  overflow:hidden;
-  transform:perspective(900px) rotateX(var(--ty)) rotateY(var(--tx));
-  transition:transform .3s var(--ease-out),border-color .3s,background .3s,box-shadow .3s;
-  min-height:260px;display:flex;flex-direction:column;justify-content:space-between;
-  backdrop-filter:blur(20px);
-  -webkit-backdrop-filter:blur(20px);
-  box-shadow:0 20px 40px -10px rgba(0,0,0,0.4),inset 0 1px 1px rgba(255,255,255,0.03);
-  will-change:transform;
-}
-.svc-card::before{
-  content:"";position:absolute;inset:-1px;border-radius:24px;
-  background:radial-gradient(600px circle at var(--mx,50%) var(--my,50%),rgba(255,255,255,.03),transparent 40%);
-  opacity:0;transition:opacity .3s;pointer-events:none;
-}
-.svc-card:hover::before{opacity:1}
-.svc-card:hover{border-color:rgba(255,255,255,.1);box-shadow:0 40px 100px -20px rgba(0,0,0,0.8),inset 0 1px 1px rgba(255,255,255,0.08),inset 0 -1px 1px rgba(0,0,0,0.5);}
-.svc-num{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--violet);letter-spacing:.18em}
-.svc-icon{
-  width:54px;height:54px;border-radius:16px;display:grid;place-items:center;
-  background:linear-gradient(135deg,rgba(255,255,255,.05),rgba(255,255,255,.02));
-  border:1px solid rgba(255,255,255,.1);
-  margin:18px 0 18px;
-  box-shadow:inset 0 1px 0 rgba(255,255,255,.15);
-}
-.svc-icon svg{width:24px;height:24px;color:#fff}
-.svc-title{font-family:'Instrument Serif',serif;font-size:26px;line-height:1.1;color:var(--ink);letter-spacing:-.01em}
-.svc-title em{color:var(--violet);font-style:italic}
-.svc-desc{margin-top:10px;color:var(--ink-soft);font-size:14.5px;line-height:1.6}
-.svc-meta{margin-top:18px;display:flex;justify-content:space-between;align-items:center;color:var(--ink-mute);font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.1em;text-transform:uppercase}
 
 /* ============= PROJECTS ============= */
 .projects{position:relative}
@@ -833,29 +637,57 @@ section{padding:120px 24px;position:relative}
   border-radius: 12px;
   border: 1px solid rgba(255,255,255,.05);
 }
-.proj-close-btn {
-  display: none;
-  margin-top: 32px;
-  width: 100%;
-  text-align: center;
-  padding: 14px;
-  background: rgba(255,255,255,.05);
-  border: 1px solid rgba(255,255,255,.1);
-  border-radius: 12px;
-  cursor: pointer;
-  color: #fff;
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 13px;
-  transition: background 0.2s;
-}
-.proj-close-btn:hover { background: rgba(255,255,255,.1); }
-.proj.expanded .proj-close-btn { display: block; }
-.proj.expanded .proj-arrow { transform: rotate(-135deg); background:#fff; color:#0b0420; }
 
 /* alternate project gradients */
 .proj:nth-child(2) .proj-visual{background:radial-gradient(circle at 30% 30%,rgba(255,255,255,.015),transparent 55%),radial-gradient(circle at 80% 70%,rgba(255,255,255,.025) 0%,transparent 55%),#050505}
 .proj:nth-child(3) .proj-visual{background:radial-gradient(circle at 40% 30%,rgba(255,255,255,.03) 0%,transparent 50%),radial-gradient(circle at 80% 70%,rgba(255,255,255,.01) 0%,transparent 40%),#080808}
 .proj:nth-child(4) .proj-visual{background:radial-gradient(circle at 30% 40%,rgba(255,255,255,.02) 0%,transparent 45%),radial-gradient(circle at 70% 60%,rgba(255,255,255,.03) 0%,transparent 50%),#030303}
+.proj:nth-child(5) .proj-visual{background:radial-gradient(circle at 30% 30%,rgba(160,100,255,.015),transparent 55%),#050505}
+.proj:nth-child(6) .proj-visual{background:radial-gradient(circle at 40% 30%,rgba(128,192,255,.02),transparent 50%),#080808}
+.proj:nth-child(7) .proj-visual{background:radial-gradient(circle at 30% 40%,rgba(160,100,255,.01),transparent 45%),#030303}
+
+/* ============= SERVICES (3D tilt cards) ============= */
+.services{position:relative}
+.services-head{display:flex;flex-direction:column;gap:20px;margin-bottom:60px}
+@media(min-width:880px){.services-head{flex-direction:row;align-items:flex-end;justify-content:space-between}}
+.services-head p{max-width:420px;color:var(--ink-soft);font-size:15.5px}
+.svc-grid{display:grid;gap:18px;grid-template-columns:1fr}
+@media(min-width:720px){.svc-grid{grid-template-columns:1fr 1fr}}
+@media(min-width:1080px){.svc-grid{grid-template-columns:repeat(3,1fr)}}
+.svc-card{
+  --tx:0deg;--ty:0deg;
+  position:relative;padding:30px 26px 28px;border-radius:24px;
+  background:var(--card-bg);
+  border:1px solid var(--hairline);
+  overflow:hidden;
+  transform:perspective(900px) rotateX(var(--ty)) rotateY(var(--tx));
+  transition:transform .3s var(--ease-out),border-color .3s,background .3s,box-shadow .3s;
+  min-height:260px;display:flex;flex-direction:column;justify-content:space-between;
+  backdrop-filter:blur(20px);
+  -webkit-backdrop-filter:blur(20px);
+  box-shadow:0 20px 40px -10px rgba(0,0,0,0.4),inset 0 1px 1px rgba(255,255,255,0.03);
+  will-change:transform;
+}
+.svc-card::before{
+  content:"";position:absolute;inset:-1px;border-radius:24px;
+  background:radial-gradient(600px circle at var(--mx,50%) var(--my,50%),rgba(255,255,255,.03),transparent 40%);
+  opacity:0;transition:opacity .3s;pointer-events:none;
+}
+.svc-card:hover::before{opacity:1}
+.svc-card:hover{border-color:rgba(255,255,255,.1);box-shadow:0 40px 100px -20px rgba(0,0,0,0.8),inset 0 1px 1px rgba(255,255,255,0.08),inset 0 -1px 1px rgba(0,0,0,0.5);}
+.svc-num{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--violet);letter-spacing:.18em}
+.svc-icon{
+  width:54px;height:54px;border-radius:16px;display:grid;place-items:center;
+  background:linear-gradient(135deg,rgba(255,255,255,.05),rgba(255,255,255,.02));
+  border:1px solid rgba(255,255,255,.1);
+  margin:18px 0 18px;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.15);
+}
+.svc-icon svg{width:24px;height:24px;color:#fff}
+.svc-title{font-family:'Instrument Serif',serif;font-size:26px;line-height:1.1;color:var(--ink);letter-spacing:-.01em}
+.svc-title em{color:var(--violet);font-style:italic}
+.svc-desc{margin-top:10px;color:var(--ink-soft);font-size:14.5px;line-height:1.6}
+.svc-meta{margin-top:18px;display:flex;justify-content:space-between;align-items:center;color:var(--ink-mute);font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.1em;text-transform:uppercase}
 
 /* ============= TECH STACK ORBIT ============= */
 .tech{position:relative;padding:140px 24px}
@@ -979,63 +811,6 @@ section{padding:120px 24px;position:relative}
 .cta-mail{display:inline-flex;align-items:center;gap:8px;margin-top:36px;padding:0;color:#fff;text-decoration:none;font-family:'JetBrains Mono',monospace;font-size:13px;border-bottom:1px solid rgba(255,255,255,.3);padding-bottom:4px;transition:border-color .3s}
 .cta-mail:hover{border-color:#fff}
 
-/* ============= FOOTER ============= */
-footer{
-  padding:60px 24px 40px;border-top:1px solid var(--hairline);
-}
-.footer-grid{max-width:1180px;margin:0 auto;display:flex;flex-direction:column;gap:30px;align-items:flex-start}
-@media(min-width:720px){.footer-grid{flex-direction:row;align-items:center;justify-content:space-between}}
-.footer-grid .brand-name{font-size:24px}
-.footer-links{display:flex;flex-wrap:wrap;gap:8px}
-.footer-links a{text-decoration:none;color:var(--ink-soft);font-size:13px;padding:8px 14px;border-radius:999px;border:1px solid var(--hairline);transition:color .25s,background .25s,border-color .25s,box-shadow .25s}
-.footer-links a:hover{color:#fff;background:rgba(255,255,255,.05)}
-/* Social icon links */
-.footer-social-link{display:inline-flex;align-items:center;gap:7px}
-.footer-social-link .footer-icon{flex-shrink:0;transition:transform .25s;color:var(--ink-mute)}
-.footer-social-link:hover .footer-icon{transform:scale(1.15);color:#c4a8ff}
-.footer-social-link:hover{color:#fff;border-color:rgba(180,140,255,.35);box-shadow:0 0 12px rgba(180,140,255,.18)}
-.footer-copy{color:var(--ink-mute);font-family:'JetBrains Mono',monospace;font-size:11.5px;letter-spacing:.1em;text-align:center;margin-top:24px}
-
-/* ============= REVEAL ON SCROLL ============= */
-[data-reveal]{opacity:0;transform:translateY(40px);transition:opacity 1.1s var(--ease-out),transform 1.1s var(--ease-out)}
-[data-reveal].in{opacity:1;transform:translateY(0)}
-
-/* responsive tweaks */
-@media(max-width:600px){
-  .nav{padding:8px 8px 8px 12px}
-  .brand-name{font-size:18px}
-  .nav-cta .btn:not(.menu-btn){display:none}
-  .hero{padding-top:120px}
-  .hero-meta{gap:24px}
-  .hero-meta .num{font-size:28px}
-  .chip-1,.chip-2,.chip-3{display:none}
-  .stage{max-width:380px}
-  section{padding:90px 18px}
-  .cta-card{padding:60px 22px}
-  
-  /* Mobile Performance & Smoothness Optimizations */
-  .grain { display: none !important; }
-  .vignette { background: none !important; }
-  .avs-glow { animation: none !important; filter: blur(30px) !important; }
-  .avs-rim, .avs-rim-2 { animation: none !important; filter: blur(15px) !important; }
-  .orbit-ring { animation: none !important; }
-}
-
-
-/* menu button (mobile) */
-.menu-btn{display:inline-grid;place-items:center;width:38px;height:38px;border-radius:50%;background:var(--glass);border:1px solid var(--hairline-2);color:var(--ink);cursor:pointer}
-@media(min-width:880px){.menu-btn{display:none}}
-.menu-btn svg{width:18px;height:18px}
-
-/* mobile drawer */
-.drawer{
-  position:fixed;inset:0;z-index:200;background:rgba(7,3,16,.95);backdrop-filter:blur(20px);
-  display:flex;flex-direction:column;justify-content:center;align-items:center;gap:30px;
-  opacity:0;pointer-events:none;transition:opacity .35s var(--ease);
-}
-.drawer.open{opacity:1;pointer-events:auto}
-.drawer a{text-decoration:none;color:#fff;font-family:'Instrument Serif',serif;font-size:42px}
-.drawer-close{position:absolute;top:24px;right:24px;background:none;border:0;color:#fff;cursor:pointer;font-size:24px}
 /* ============= CONTACT MODAL ============= */
 .contact-modal-overlay {
   position: fixed; inset: 0; background: rgba(0,0,0,0.8); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
@@ -1063,7 +838,6 @@ footer{
 }
 .modal-close:hover { background: rgba(255,255,255,0.1); }
 
-/* Left Side: Info */
 .modal-info { display: flex; flex-direction: column; justify-content: center; }
 .modal-info h3 { font-family: 'Instrument Serif', serif; font-size: 38px; color: #fff; margin-bottom: 12px; line-height: 1.1; }
 .modal-info p { color: var(--ink-soft); font-size: 15.5px; line-height: 1.6; margin-bottom: 32px; }
@@ -1078,7 +852,6 @@ footer{
 .modal-contact-links a:hover { color: var(--ink-mute); transform: translateX(4px); }
 .modal-contact-links svg { width: 18px; height: 18px; color: var(--ink-mute); }
 
-/* Right Side: Form */
 .modal-form-wrap { position: relative; background: rgba(0,0,0,0.2); padding: 32px; border-radius: 20px; border: 1px solid rgba(255,255,255,0.03); }
 @media (max-width: 768px) { .modal-form-wrap { padding: 24px; } }
 .contact-form { display: grid; grid-template-columns: 1fr; gap: 20px; transition: opacity 0.3s; }
@@ -1116,7 +889,62 @@ footer{
 .contact-form.submitting .form-loader { display: block; }
 .contact-form.submitting .btn-text { display: none; }
 
+/* responsive tweaks */
+@media(max-width:600px){
+  .nav{padding:8px 8px 8px 12px}
+  .brand-name{font-size:18px}
+  .nav-cta .btn:not(.menu-btn){display:none}
+  .hero{padding-top:120px; padding-left: 20px; padding-right: 20px;}
+  .hero-meta{gap:24px}
+  .hero-meta .num{font-size:28px}
+  .hero-headline{font-size:clamp(32px, 9vw, 46px); line-height:1.05}
+  .chip-1,.chip-2,.chip-3{display:none}
+  .stage{max-width:380px}
+  section{padding:90px 18px}
+  .cta-card{padding:60px 22px}
+  
+  /* Mobile Performance & Smoothness Optimizations */
+  .grain { display: none !important; }
+  .vignette { background: none !important; }
+  .avs-glow { animation: none !important; filter: blur(30px) !important; }
+  .avs-rim, .avs-rim-2 { animation: none !important; filter: blur(15px) !important; }
+  .orbit-ring { animation: none !important; }
+}
 
+/* menu button (mobile) */
+.menu-btn{display:inline-grid;place-items:center;width:38px;height:38px;border-radius:50%;background:var(--glass);border:1px solid var(--hairline-2);color:var(--ink);cursor:pointer}
+@media(min-width:880px){.menu-btn{display:none}}
+.menu-btn svg{width:18px;height:18px}
+
+/* mobile drawer */
+.drawer{
+  position:fixed;inset:0;z-index:200;background:rgba(7,3,16,.95);backdrop-filter:blur(20px);
+  display:flex;flex-direction:column;justify-content:center;align-items:center;gap:30px;
+  opacity:0;pointer-events:none;transition:opacity .35s var(--ease);
+}
+.drawer.open{opacity:1;pointer-events:auto}
+.drawer a{text-decoration:none;color:#fff;font-family: 'Instrument Serif',serif;font-size:42px}
+.drawer-close{position:absolute;top:24px;right:24px;background:none;border:0;color:#fff;cursor:pointer;font-size:24px}
+
+/* Footer link animation */
+.footer-social-link{display:inline-flex;align-items:center;gap:7px; text-decoration:none;}
+.footer-social-link .footer-icon{flex-shrink:0;transition:transform .25s;color:var(--ink-mute)}
+.footer-social-link:hover .footer-icon{transform:scale(1.15);color:#c4a8ff}
+.footer-social-link:hover{color:#fff;border-color:rgba(180,140,255,.35);box-shadow:0 0 12px rgba(180,140,255,.18)}
+.footer-copy{color:var(--ink-mute);font-family:'JetBrains Mono',monospace;font-size:11.5px;letter-spacing:.1em;text-align:center;margin-top:24px}
+footer{
+  padding:60px 24px 40px;border-top:1px solid var(--hairline);
+}
+.footer-grid{max-width:1180px;margin:0 auto;display:flex;flex-direction:column;gap:30px;align-items:flex-start}
+@media(min-width:720px){.footer-grid{flex-direction:row;align-items:center;justify-content:space-between}}
+.footer-grid .brand-name{font-size:24px}
+.footer-links{display:flex;flex-wrap:wrap;gap:8px}
+.footer-links a{text-decoration:none;color:var(--ink-soft);font-size:13px;padding:8px 14px;border-radius:999px;border:1px solid var(--hairline);transition:color .25s,background .25s,border-color .25s,box-shadow .25s}
+.footer-links a:hover{color:#fff;background:rgba(255,255,255,.05)}
+
+/* Reveal on scroll */
+[data-reveal]{opacity:0;transform:translateY(40px);transition:opacity 1.1s var(--ease-out),transform 1.1s var(--ease-out)}
+[data-reveal].in{opacity:1;transform:translateY(0)}
 </style>
 </head>
 <body>
@@ -1131,16 +959,16 @@ footer{
 
 <!-- nav -->
 <nav class="nav" aria-label="Main">
-  <a class="brand" href="#top" aria-label="JRK Studio home">
+  <a class="brand" href="index.html#top" aria-label="JRK Studio home">
     <div class="brand-mark"><span>J</span></div>
     <div class="brand-name">JRK<em>.studio</em></div>
   </a>
   <div class="nav-links">
-    <a href="projects.html" target="_blank" rel="noopener noreferrer">Work</a>
-    <a href="#services">Services</a>
-    <a href="#about">About</a>
-    <a href="#stack">Stack</a>
-    <a href="#voices">Voices</a>
+    <a href="projects.html" class="active">Work</a>
+    <a href="index.html#services">Services</a>
+    <a href="index.html#about">About</a>
+    <a href="index.html#stack">Stack</a>
+    <a href="index.html#voices">Voices</a>
   </div>
   <div class="nav-cta">
     <span class="nav-status"><span class="dot"></span> Open · 2026 Q3</span>
@@ -1154,11 +982,11 @@ footer{
 <!-- drawer -->
 <div class="drawer" id="drawer">
   <button class="drawer-close" id="drawerClose" aria-label="Close">✕</button>
-  <a href="projects.html" target="_blank" rel="noopener noreferrer">Work</a>
-  <a href="#services">Services</a>
-  <a href="#about">About</a>
-  <a href="#stack">Stack</a>
-  <a href="#voices">Voices</a>
+  <a href="projects.html">Work</a>
+  <a href="index.html#services">Services</a>
+  <a href="index.html#about">About</a>
+  <a href="index.html#stack">Stack</a>
+  <a href="index.html#voices">Voices</a>
   <a href="#" onclick="openContactModal(event)">Contact</a>
 </div>
 
@@ -1167,36 +995,35 @@ footer{
   <div class="container hero-grid">
 
     <div class="hero-copy">
-      <span class="kicker">Junaid · Founder · JRK Studio</span>
+      <span class="kicker">Junaid · Selected Works</span>
 
       <h1 class="h-display hero-headline">
-        <span class="line"><span>Crafting</span></span>
-        <span class="line"><span><em>cinematic 3D</em></span></span>
-        <span class="line"><span>web worlds.</span></span>
+        <span class="line"><span>The Project</span></span>
+        <span class="line"><span><em>Archive</em></span></span>
       </h1>
 
       <p class="hero-sub">
-        I craft cinematic digital experiences powered by modern frontend engineering, intelligent automation, and immersive motion design — creating products that feel less like websites and more like <em>living systems.</em>
+        Exploring a curated collection of live applications, custom designs, and intelligent automated systems. Scroll down to inspect individual builds and launch their live sites.
       </p>
 
       <div class="hero-actions">
-        <a class="btn btn-primary btn-lg" href="#" onclick="openContactModal(event)">
-          Start a project
+        <a class="btn btn-primary btn-lg" href="#work">
+          Explore Archive
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M5 12h14M13 5l7 7-7 7"/></svg>
         </a>
-        <a class="btn btn-ghost btn-lg" href="#work">
-          See selected work
+        <a class="btn btn-ghost btn-lg" href="index.html">
+          Back to Home
         </a>
       </div>
 
       <div class="hero-meta">
-        <div class="stat"><div class="num"><em>5+</em></div><div class="label">Years building</div></div>
-        <div class="stat"><div class="num">62</div><div class="label">Sites shipped</div></div>
-        <div class="stat"><div class="num">4.98<em>★</em></div><div class="label">Avg client rating</div></div>
+        <div class="stat"><div class="num"><em>7</em></div><div class="label">Live Builds</div></div>
+        <div class="stat"><div class="num">100%</div><div class="label">Custom Designed</div></div>
+        <div class="stat"><div class="num">60<em>fps</em></div><div class="label">Target Motion</div></div>
       </div>
     </div>
 
-    <!-- 3D STAGE -->
+    <!-- 3D STAGE FOR VIDEO AVATAR -->
     <div class="stage" id="stage">
       <div class="stage-inner" id="stageInner">
 
@@ -1208,21 +1035,25 @@ footer{
 
         <div class="av-stage" aria-hidden="true">
           <div class="avs-glow"></div>
-          <div class="avs-rim"></div>
-          <div class="avs-rim-2"></div>
           <div class="avs-bg"></div>
           <div class="avs-float">
             <div class="avs-breath">
-              <canvas class="avs-img" id="avsImg" aria-label="Junaid · JRK Studio"></canvas>
+              <!-- Wrapper clips the bottom-right corner to mask out the Gemini logo star -->
+              <div class="avatar-video-wrap">
+                <!-- Hidden video element that decodes frames -->
+                <video id="avatarVideo" style="position:absolute; opacity:0; width:1px; height:1px; pointer-events:none;" autoplay loop muted playsinline preload="auto">
+                  <source src="avatar2.mp4" type="video/mp4">
+                  Your browser does not support the video tag.
+                </video>
+                <!-- Canvas element that renders the video frames with screen blending -->
+                <canvas id="avatarCanvas" class="avs-video"></canvas>
+              </div>
             </div>
           </div>
-          <div class="avs-shimmer"></div>
-          <div class="avs-screen-glow" id="avsScreenGlow"></div>
-          <div class="avs-veil"></div>
         </div>
 
       </div>
-      <!-- Chips: outside stage-inner so they're unaffected by the mask -->
+      <!-- Chips: tech stacks related to work -->
       <div class="chip chip-1">
         <div class="icon-wrap">
           <svg viewBox="0 0 24 24" fill="none" stroke="#a37bff" stroke-width="2.5"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a14 14 0 0 1 0 18M12 3a14 14 0 0 0 0 18"/></svg>
@@ -1252,66 +1083,271 @@ footer{
   </div>
 </header>
 
-<!-- ============================================== MARQUEE ============================================== -->
-<div class="marquee" aria-hidden="true">
-  <div class="marquee-track">
-    <div class="marquee-item">Cinematic <em>frontend</em><span class="sep"></span></div>
-    <div class="marquee-item">3D <em>web experiences</em><span class="sep"></span></div>
-    <div class="marquee-item"><em>Motion</em> design<span class="sep"></span></div>
-    <div class="marquee-item">Apple-grade <em>polish</em><span class="sep"></span></div>
-    <div class="marquee-item">Linear-grade <em>code</em><span class="sep"></span></div>
-    <div class="marquee-item">Cinematic <em>frontend</em><span class="sep"></span></div>
-    <div class="marquee-item">3D <em>web experiences</em><span class="sep"></span></div>
-    <div class="marquee-item"><em>Motion</em> design<span class="sep"></span></div>
-    <div class="marquee-item">Apple-grade <em>polish</em><span class="sep"></span></div>
-    <div class="marquee-item">Linear-grade <em>code</em><span class="sep"></span></div>
-  </div>
-</div>
-
-<!-- ============================================== ABOUT ============================================== -->
-<section id="about" class="about">
+<!-- ============================================== PROJECTS ARCHIVE ============================================== -->
+<section id="work" class="projects">
   <div class="container">
-    <span class="kicker" data-reveal>About</span>
-    <div class="about-grid" style="margin-top:30px">
+    <div class="proj-head">
       <div data-reveal>
-        <h2 class="about-lead">
-          A one-person <em>studio</em> obsessed with the moment a product feels
-          <em>alive</em>.
-        </h2>
+        <span class="kicker">Projects Archive</span>
+        <h2 class="h-section" style="margin-top:18px">Selected <em>Live Builds</em>.</h2>
       </div>
-      <div data-reveal>
-        <div class="about-body">
-          <p>
-            I design and engineer end-to-end — from the first dark sketch to the
-            final shader. Where most freelancers stop at "responsive," I'm chasing
-            the half-second a user goes <em>"oh, this is different."</em>
-          </p>
-          <p>
-            JRK Studio partners with founders, design studios and bold brands who
-            want their next site to feel like a launch trailer, not a template.
-            Cinematic, calm, technically tight.
-          </p>
-        </div>
+      <p data-reveal>Browse all recently shipped web applications, digital tools, and agency sites. Click any project to open its details and launch the live site.</p>
+    </div>
 
-        <div class="about-cards">
-          <div class="about-card">
-            <div class="k">Based</div>
-            <div class="v">Remote · <em>WW</em></div>
-          </div>
-          <div class="about-card">
-            <div class="k">Approach</div>
-            <div class="v">Design <em>+</em> Code</div>
-          </div>
-          <div class="about-card">
-            <div class="k">Sprint</div>
-            <div class="v">2–6 <em>weeks</em></div>
-          </div>
-          <div class="about-card">
-            <div class="k">Engagements</div>
-            <div class="v"><em>3</em>/quarter</div>
+    <div class="proj-grid">
+
+      <!-- PROJECT 1: FASTCV PK -->
+      <article class="proj" data-reveal onclick="this.classList.add('expanded')">
+        <div class="proj-visual">
+          <div class="proj-mock">
+            <img src="assets/projects/fastcv_pk.png" loading="lazy" alt="FastCV PK Mockup" />
           </div>
         </div>
-      </div>
+        <div class="proj-info">
+          <div class="proj-info-left">
+            <h3 class="proj-name">FastCV <em>PK</em></h3>
+            <div class="proj-tag">ATS Resume Builder & Biodata Maker · Next.js · 2026</div>
+          </div>
+          <div class="proj-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 5l7 7-7 7"/></svg></div>
+        </div>
+        <div class="proj-detail" onclick="event.stopPropagation()">
+          <h4>The Vision</h4>
+          <p>FastCV PK was created as Pakistan's premier free online resume builder. The target was to offer a frictionless ATS-friendly CV builder and custom Matrimonial Biodata generator optimized specifically for regional users, without heavy templates or complex design editors.</p>
+          <h4>The Build</h4>
+          <p>Built as a Next.js 14 web application using Tailwind CSS for UI and Cloud Firestore for document storage. Deployed at the edge, it integrates Google Gemini API to write and polish job descriptions, and renders print-ready, high-resolution A4 PDFs instantly in the browser using jsPDF.</p>
+          <h4>The Outcome</h4>
+          <p>The application has generated thousands of resumes since launch, offering a fully mobile-responsive interface that allows job-seekers to create and download water-mark-free, ATS-friendly professional resumes in seconds.</p>
+          <div class="proj-gallery">
+            <img src="assets/services/svc_saas.png" alt="FastCV UI detail 1" />
+            <img src="assets/services/svc_design.png" alt="FastCV UI detail 2" />
+          </div>
+          <div style="display: flex; gap: 12px; margin-top: 32px;">
+            <a class="btn btn-primary" href="https://www.fastcvpk.online/" target="_blank" rel="noopener" style="flex: 1; justify-content: center;">
+              Launch Live Site ↗
+            </a>
+            <button class="btn btn-ghost" onclick="this.closest('.proj').classList.remove('expanded')" style="flex: 1; justify-content: center;">
+              Close Case Study
+            </button>
+          </div>
+        </div>
+      </article>
+
+      <!-- PROJECT 2: RISHTAGPT -->
+      <article class="proj" data-reveal onclick="this.classList.add('expanded')">
+        <div class="proj-visual">
+          <div class="proj-mock">
+            <img src="assets/projects/rishtagpt.png" loading="lazy" alt="RishtaGPT Mockup" />
+          </div>
+        </div>
+        <div class="proj-info">
+          <div class="proj-info-left">
+            <h3 class="proj-name">Rishta<em>GPT</em></h3>
+            <div class="proj-tag">AI Matrimonial Bio Maker · Next.js · 2026</div>
+          </div>
+          <div class="proj-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 5l7 7-7 7"/></svg></div>
+        </div>
+        <div class="proj-detail" onclick="event.stopPropagation()">
+          <h4>The Vision</h4>
+          <p>RishtaGPT was designed to simplify matrimonial profiling by generating elegant, culturally grounded bio-datas. Users require a quick, secure, and respectful generator to draft personal portfolios in multiple styles and languages.</p>
+          <h4>The Build</h4>
+          <p>A sleek, responsive Next.js application that leverages Gemini AI models. It accepts basic user input and outputs structured, formal descriptions in Urdu, English, and Roman Urdu. It offers 5 distinct tones (Traditional, Modern, Poetic, Professional, Detailed) and instant card image generation.</p>
+          <h4>The Outcome</h4>
+          <p>A highly viral utility in the regional space, enabling users to generate dignified profiles and share them directly on WhatsApp. The site operates with 100% security and zero client-side caching of sensitive images.</p>
+          <div class="proj-gallery">
+            <img src="assets/services/svc_brand.png" alt="RishtaGPT detail 1" />
+            <img src="assets/services/svc_motion.png" alt="RishtaGPT detail 2" />
+          </div>
+          <div style="display: flex; gap: 12px; margin-top: 32px;">
+            <a class="btn btn-primary" href="https://rishtagpt.online/" target="_blank" rel="noopener" style="flex: 1; justify-content: center;">
+              Launch Live Site ↗
+            </a>
+            <button class="btn btn-ghost" onclick="this.closest('.proj').classList.remove('expanded')" style="flex: 1; justify-content: center;">
+              Close Case Study
+            </button>
+          </div>
+        </div>
+      </article>
+
+      <!-- PROJECT 3: MARHABA TRADERS -->
+      <article class="proj" data-reveal onclick="this.classList.add('expanded')">
+        <div class="proj-visual">
+          <div class="proj-mock">
+            <img src="assets/projects/marhaba_traders.png" loading="lazy" alt="Marhaba Traders Portal" />
+          </div>
+        </div>
+        <div class="proj-info">
+          <div class="proj-info-left">
+            <h3 class="proj-name">Marhaba <em>Traders</em></h3>
+            <div class="proj-tag">Startup Ecosystem Portal · Vanilla JS · 2026</div>
+          </div>
+          <div class="proj-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 5l7 7-7 7"/></svg></div>
+        </div>
+        <div class="proj-detail" onclick="event.stopPropagation()">
+          <h4>The Vision</h4>
+          <p>Marhaba Traders is Pakistan's premier startup investment consulting firm. They needed a luxury digital ecosystem to display financial metrics, structure pitch deck builders, and connect local seed-stage founders with angel investors in the Gulf and diaspora VCs.</p>
+          <h4>The Build</h4>
+          <p>Engineered using ultra-fast vanilla HTML/CSS and lightweight JavaScript scroll-reveal engines. Styled with an exquisite luxury gold and charcoal color palette, incorporating structural structured data (JSON-LD) for corporate credibility, responsive layout grid structures, and interactive lightbox galleries.</p>
+          <h4>The Outcome</h4>
+          <p>The landing portal served as the primary interface for portfolio businesses, supporting over PKR 14 Crore in raised startup capital, and significantly boosting conversion rates for international diasporic investor campaigns.</p>
+          <div class="proj-gallery">
+            <img src="assets/services/svc_brand.png" alt="Marhaba Traders Detail 1" />
+            <img src="assets/services/svc_design.png" alt="Marhaba Traders Detail 2" />
+          </div>
+          <div style="display: flex; gap: 12px; margin-top: 32px;">
+            <a class="btn btn-primary" href="https://marhabatraders.online" target="_blank" rel="noopener" style="flex: 1; justify-content: center;">
+              Launch Live Site ↗
+            </a>
+            <button class="btn btn-ghost" onclick="this.closest('.proj').classList.remove('expanded')" style="flex: 1; justify-content: center;">
+              Close Case Study
+            </button>
+          </div>
+        </div>
+      </article>
+
+      <!-- PROJECT 4: LUMEN OS -->
+      <article class="proj" data-reveal onclick="this.classList.add('expanded')">
+        <div class="proj-visual">
+          <div class="proj-mock">
+            <img src="assets/projects/lumen_os.png" loading="lazy" alt="Lumen OS Dashboard" />
+          </div>
+        </div>
+        <div class="proj-info">
+          <div class="proj-info-left">
+            <h3 class="proj-name">Lumen <em>OS</em></h3>
+            <div class="proj-tag">SaaS dashboard · Design + build · 2026</div>
+          </div>
+          <div class="proj-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 5l7 7-7 7"/></svg></div>
+        </div>
+        <div class="proj-detail" onclick="event.stopPropagation()">
+          <h4>The Vision</h4>
+          <p>Lumen OS needed a radical redesign of their dense analytics platform. The goal was to transform a utilitarian data dashboard into a premium, cinematic experience that felt like a luxury tool.</p>
+          <h4>The Build</h4>
+          <p>We engineered a highly responsive React interface with perfect dark mode contrast, zero-latency transitions, and a dense, architectural layout that prioritizes keyboard-first interaction.</p>
+          <h4>The Outcome</h4>
+          <p>Post-launch, user session lengths increased by 42%, and the aesthetic overhaul directly contributed to their successful Series B raise. It now sets the industry standard for SaaS UI.</p>
+          <div class="proj-gallery">
+            <img src="assets/services/svc_saas.png" alt="Lumen UI Detail 1" />
+            <img src="assets/services/svc_design.png" alt="Lumen UI Detail 2" />
+          </div>
+          <div style="display: flex; gap: 12px; margin-top: 32px;">
+            <a class="btn btn-primary" href="#" style="flex: 1; justify-content: center;">
+              Launch Live Site ↗
+            </a>
+            <button class="btn btn-ghost" onclick="this.closest('.proj').classList.remove('expanded')" style="flex: 1; justify-content: center;">
+              Close Case Study
+            </button>
+          </div>
+        </div>
+      </article>
+
+      <!-- PROJECT 5: HALO STUDIOS -->
+      <article class="proj" data-reveal onclick="this.classList.add('expanded')">
+        <div class="proj-visual">
+          <div class="proj-mock">
+            <img src="assets/projects/halo_studios.png" loading="lazy" alt="Halo Studios Hero" />
+          </div>
+        </div>
+        <div class="proj-info">
+          <div class="proj-info-left">
+            <h3 class="proj-name">Halo <em>Studios</em></h3>
+            <div class="proj-tag">Agency site · 3D hero · 2025</div>
+          </div>
+          <div class="proj-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 5l7 7-7 7"/></svg></div>
+        </div>
+        <div class="proj-detail" onclick="event.stopPropagation()">
+          <h4>The Vision</h4>
+          <p>Halo Studios, a premier creative agency, wanted a portfolio that broke away from standard grid templates. They needed a site that felt like an immersive, interactive art gallery.</p>
+          <h4>The Build</h4>
+          <p>We built a custom WebGL hero sequence using Three.js, integrated with a seamless, scroll-linked cinematic animation system. Every interaction was designed to feel heavy and deliberate.</p>
+          <h4>The Outcome</h4>
+          <p>The site won Site of the Month on Awwwards, dropping bounce rates by 28% and elevating the agency's perceived value to match their elite enterprise clientele.</p>
+          <div class="proj-gallery">
+            <img src="assets/services/svc_3d.png" alt="Halo Studios Detail 1" />
+            <img src="assets/services/svc_motion.png" alt="Halo Studios Detail 2" />
+          </div>
+          <div style="display: flex; gap: 12px; margin-top: 32px;">
+            <a class="btn btn-primary" href="#" style="flex: 1; justify-content: center;">
+              Launch Live Site ↗
+            </a>
+            <button class="btn btn-ghost" onclick="this.closest('.proj').classList.remove('expanded')" style="flex: 1; justify-content: center;">
+              Close Case Study
+            </button>
+          </div>
+        </div>
+      </article>
+
+      <!-- PROJECT 6: NOVA SKINCARE -->
+      <article class="proj" data-reveal onclick="this.classList.add('expanded')">
+        <div class="proj-visual">
+          <div class="proj-mock">
+            <img src="assets/projects/nova_skincare.png" loading="lazy" alt="Nova Skincare WebGL" />
+          </div>
+        </div>
+        <div class="proj-info">
+          <div class="proj-info-left">
+            <h3 class="proj-name">Nova <em>Skincare</em></h3>
+            <div class="proj-tag">DTC launch · WebGL bottle · 2025</div>
+          </div>
+          <div class="proj-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 5l7 7-7 7"/></svg></div>
+        </div>
+        <div class="proj-detail" onclick="event.stopPropagation()">
+          <h4>The Vision</h4>
+          <p>Nova Skincare was launching a luxury DTC product and needed their digital storefront to reflect the physical quality of their frosted glass packaging.</p>
+          <h4>The Build</h4>
+          <p>We implemented a real-time WebGL interactive 3D bottle that users could spin and inspect, wrapped in an ultra-minimalist, high-fashion monochrome layout.</p>
+          <h4>The Outcome</h4>
+          <p>The immersive 3D experience led to a 15% higher conversion rate compared to standard static imagery, positioning Nova as a top-tier luxury brand from day one.</p>
+          <div class="proj-gallery">
+            <img src="assets/services/svc_brand.png" alt="Nova Skincare Detail 1" />
+            <img src="assets/services/svc_3d.png" alt="Nova Skincare Detail 2" />
+          </div>
+          <div style="display: flex; gap: 12px; margin-top: 32px;">
+            <a class="btn btn-primary" href="#" style="flex: 1; justify-content: center;">
+              Launch Live Site ↗
+            </a>
+            <button class="btn btn-ghost" onclick="this.closest('.proj').classList.remove('expanded')" style="flex: 1; justify-content: center;">
+              Close Case Study
+            </button>
+          </div>
+        </div>
+      </article>
+
+      <!-- PROJECT 7: DRIFTLY AI -->
+      <article class="proj" data-reveal onclick="this.classList.add('expanded')">
+        <div class="proj-visual">
+          <div class="proj-mock">
+            <img src="assets/projects/driftly_ai.png" loading="lazy" alt="Driftly AI Landing Page" />
+          </div>
+        </div>
+        <div class="proj-info">
+          <div class="proj-info-left">
+            <h3 class="proj-name">Driftly <em>AI</em></h3>
+            <div class="proj-tag">YC startup · Marketing site · 2025</div>
+          </div>
+          <div class="proj-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 5l7 7-7 7"/></svg></div>
+        </div>
+        <div class="proj-detail" onclick="event.stopPropagation()">
+          <h4>The Vision</h4>
+          <p>Driftly AI needed to stand out in a sea of generic AI startups. They requested a "calm" approach to AI—avoiding the typical glowing neon tropes.</p>
+          <h4>The Build</h4>
+          <p>We stripped away all color, focusing purely on typographic hierarchy, smooth GSAP motion trails, and deep shadows, delivering a site that felt like an editorial magazine.</p>
+          <h4>The Outcome</h4>
+          <p>The launch was highly successful, attracting immediate attention from tier-1 VCs who noted the "incredibly mature" visual presence for a seed-stage company.</p>
+          <div class="proj-gallery">
+            <img src="assets/services/svc_design.png" alt="Driftly AI Detail 1" />
+            <img src="assets/services/svc_brand.png" alt="Driftly AI Detail 2" />
+          </div>
+          <div style="display: flex; gap: 12px; margin-top: 32px;">
+            <a class="btn btn-primary" href="#" style="flex: 1; justify-content: center;">
+              Launch Live Site ↗
+            </a>
+            <button class="btn btn-ghost" onclick="this.closest('.proj').classList.remove('expanded')" style="flex: 1; justify-content: center;">
+              Close Case Study
+            </button>
+          </div>
+        </div>
+      </article>
+
     </div>
   </div>
 </section>
@@ -1389,142 +1425,6 @@ footer{
         <div class="svc-meta"><span>PKR 25K/mo</span><span>Monthly</span></div>
       </article>
 
-    </div>
-  </div>
-</section>
-
-<!-- ============================================== PROJECTS ============================================== -->
-<section id="work" class="projects">
-  <div class="container">
-    <div class="proj-head">
-      <div data-reveal>
-        <span class="kicker">Selected work</span>
-        <h2 class="h-section" style="margin-top:18px">Recent <em>launches</em>.</h2>
-      </div>
-      <p data-reveal>A snapshot of 2025–2026 builds. Each one shipped with bespoke motion, custom design, and zero templates.</p>
-    </div>
-
-    <div class="proj-grid">
-
-      <article class="proj" data-reveal onclick="this.classList.add('expanded')">
-        <div class="proj-visual">
-          <div class="proj-mock">
-            <img src="assets/projects/lumen_os.png" loading="lazy" alt="Lumen OS Dashboard" />
-          </div>
-        </div>
-        <div class="proj-info">
-          <div class="proj-info-left">
-            <h3 class="proj-name">Lumen <em>OS</em></h3>
-            <div class="proj-tag">SaaS dashboard · Design + build · 2026</div>
-          </div>
-          <div class="proj-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 5l7 7-7 7"/></svg></div>
-        </div>
-        <div class="proj-detail" onclick="event.stopPropagation()">
-          <h4>The Vision</h4>
-          <p>Lumen OS needed a radical redesign of their dense analytics platform. The goal was to transform a utilitarian data dashboard into a premium, cinematic experience that felt like a luxury tool.</p>
-          <h4>The Build</h4>
-          <p>We engineered a highly responsive React 19 interface with perfect dark mode contrast, zero-latency transitions, and a dense, architectural layout that prioritizes keyboard-first interaction.</p>
-          <h4>The Outcome</h4>
-          <p>Post-launch, user session lengths increased by 42%, and the aesthetic overhaul directly contributed to their successful Series B raise. It now sets the industry standard for SaaS UI.</p>
-          <div class="proj-gallery">
-            <img src="assets/services/svc_saas.png" alt="Lumen UI Detail 1" />
-            <img src="assets/services/svc_design.png" alt="Lumen UI Detail 2" />
-          </div>
-          <button class="proj-close-btn" onclick="this.closest('.proj').classList.remove('expanded')">Close Case Study</button>
-        </div>
-      </article>
-
-      <article class="proj" data-reveal onclick="this.classList.add('expanded')">
-        <div class="proj-visual">
-          <div class="proj-mock">
-            <img src="assets/projects/halo_studios.png" loading="lazy" alt="Halo Studios Hero" />
-          </div>
-        </div>
-        <div class="proj-info">
-          <div class="proj-info-left">
-            <h3 class="proj-name">Halo <em>Studios</em></h3>
-            <div class="proj-tag">Agency site · 3D hero · 2025</div>
-          </div>
-          <div class="proj-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 5l7 7-7 7"/></svg></div>
-        </div>
-        <div class="proj-detail" onclick="event.stopPropagation()">
-          <h4>The Vision</h4>
-          <p>Halo Studios, a premier creative agency, wanted a portfolio that broke away from standard grid templates. They needed a site that felt like an immersive, interactive art gallery.</p>
-          <h4>The Build</h4>
-          <p>We built a custom WebGL hero sequence using Three.js, integrated with a seamless, scroll-linked cinematic animation system. Every interaction was designed to feel heavy and deliberate.</p>
-          <h4>The Outcome</h4>
-          <p>The site won Site of the Month on Awwwards, dropping bounce rates by 28% and elevating the agency's perceived value to match their elite enterprise clientele.</p>
-          <div class="proj-gallery">
-            <img src="assets/services/svc_3d.png" alt="Halo Studios Detail 1" />
-            <img src="assets/services/svc_motion.png" alt="Halo Studios Detail 2" />
-          </div>
-          <button class="proj-close-btn" onclick="this.closest('.proj').classList.remove('expanded')">Close Case Study</button>
-        </div>
-      </article>
-
-      <article class="proj" data-reveal onclick="this.classList.add('expanded')">
-        <div class="proj-visual">
-          <div class="proj-mock">
-            <img src="assets/projects/nova_skincare.png" loading="lazy" alt="Nova Skincare WebGL" />
-          </div>
-        </div>
-        <div class="proj-info">
-          <div class="proj-info-left">
-            <h3 class="proj-name">Nova <em>Skincare</em></h3>
-            <div class="proj-tag">DTC launch · WebGL bottle · 2025</div>
-          </div>
-          <div class="proj-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 5l7 7-7 7"/></svg></div>
-        </div>
-        <div class="proj-detail" onclick="event.stopPropagation()">
-          <h4>The Vision</h4>
-          <p>Nova Skincare was launching a luxury DTC product and needed their digital storefront to reflect the physical quality of their frosted glass packaging.</p>
-          <h4>The Build</h4>
-          <p>We implemented a real-time WebGL interactive 3D bottle that users could spin and inspect, wrapped in an ultra-minimalist, high-fashion monochrome layout.</p>
-          <h4>The Outcome</h4>
-          <p>The immersive 3D experience led to a 15% higher conversion rate compared to standard static imagery, positioning Nova as a top-tier luxury brand from day one.</p>
-          <div class="proj-gallery">
-            <img src="assets/services/svc_brand.png" alt="Nova Skincare Detail 1" />
-            <img src="assets/services/svc_3d.png" alt="Nova Skincare Detail 2" />
-          </div>
-          <button class="proj-close-btn" onclick="this.closest('.proj').classList.remove('expanded')">Close Case Study</button>
-        </div>
-      </article>
-
-      <article class="proj" data-reveal onclick="this.classList.add('expanded')">
-        <div class="proj-visual">
-          <div class="proj-mock">
-            <img src="assets/projects/driftly_ai.png" loading="lazy" alt="Driftly AI Landing Page" />
-          </div>
-        </div>
-        <div class="proj-info">
-          <div class="proj-info-left">
-            <h3 class="proj-name">Driftly <em>AI</em></h3>
-            <div class="proj-tag">YC startup · Marketing site · 2025</div>
-          </div>
-          <div class="proj-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 5l7 7-7 7"/></svg></div>
-        </div>
-        <div class="proj-detail" onclick="event.stopPropagation()">
-          <h4>The Vision</h4>
-          <p>Driftly AI needed to stand out in a sea of generic AI startups. They requested a "calm" approach to AI—avoiding the typical glowing neon tropes.</p>
-          <h4>The Build</h4>
-          <p>We stripped away all color, focusing purely on typographic hierarchy, smooth GSAP motion trails, and deep shadows, delivering a site that felt like an editorial magazine.</p>
-          <h4>The Outcome</h4>
-          <p>The launch was highly successful, attracting immediate attention from tier-1 VCs who noted the "incredibly mature" visual presence for a seed-stage company.</p>
-          <div class="proj-gallery">
-            <img src="assets/services/svc_design.png" alt="Driftly AI Detail 1" />
-            <img src="assets/services/svc_brand.png" alt="Driftly AI Detail 2" />
-          </div>
-          <button class="proj-close-btn" onclick="this.closest('.proj').classList.remove('expanded')">Close Case Study</button>
-        </div>
-      </article>
-
-    </div>
-    
-    <div style="display: flex; justify-content: center; margin-top: 48px;" data-reveal>
-      <a class="btn btn-primary" href="projects.html" target="_blank" rel="noopener noreferrer">
-        View All Live Projects
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M5 12h14M13 5l7 7-7 7"/></svg>
-      </a>
     </div>
   </div>
 </section>
@@ -1736,13 +1636,12 @@ footer{
 <!-- ============================================== FOOTER ============================================== -->
 <footer>
   <div class="footer-grid">
-    <a class="brand" href="#top">
+    <a class="brand" href="index.html#top">
       <div class="brand-mark"><span>J</span></div>
       <div class="brand-name">JRK<em>.studio</em></div>
     </a>
     <div class="footer-links">
       <a href="https://www.instagram.com/junaid_rana46" target="_blank" rel="noopener" class="footer-social-link" aria-label="Instagram">
-        <!-- Instagram official icon -->
         <svg class="footer-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
           <rect x="2" y="2" width="20" height="20" rx="5.5" ry="5.5"/>
           <circle cx="12" cy="12" r="4.5"/>
@@ -1751,7 +1650,6 @@ footer{
         <span>Instagram</span>
       </a>
       <a href="mailto:junaidauto46@gmail.com?subject=Project%20Inquiry%20—%20JRK%20Studio" class="footer-social-link" aria-label="Email">
-        <!-- Gmail / Email icon -->
         <svg class="footer-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
           <rect x="2" y="4" width="20" height="16" rx="2"/>
           <polyline points="2,4 12,13 22,4"/>
@@ -1759,7 +1657,6 @@ footer{
         <span>Email</span>
       </a>
       <a href="https://wa.me/923304654786" target="_blank" rel="noopener" class="footer-social-link" aria-label="WhatsApp">
-        <!-- WhatsApp official icon -->
         <svg class="footer-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
           <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/>
           <path d="M9 10c.4.8.8 1.5 1.5 2.2.7.7 1.4 1.1 2.2 1.5l.7-.7c.3-.3.7-.4 1-.2.5.2 1 .5 1.5.7.3.2.4.6.2.9l-.5.9c-.2.4-.7.6-1.1.5C11.8 15.2 8.8 12.2 8 9.7c-.1-.4.1-.9.5-1.1l.9-.5c.3-.2.7-.1.9.2.2.5.5 1 .7 1.5.2.3.1.7-.2 1z"/>
@@ -1771,114 +1668,6 @@ footer{
   <div class="footer-copy">© 2026 JRK STUDIO · CRAFTED WITH MOTION · REMOTE WORLDWIDE</div>
 </footer>
 
-<script>
-
-
-/* ============================================================
-   Reveal on scroll
-============================================================ */
-(function(){
-  const io=new IntersectionObserver(es=>{
-    es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target)}});
-  },{threshold:.12});
-  document.querySelectorAll('[data-reveal]').forEach(el=>io.observe(el));
-})();
-
-/* ============================================================
-   Hero stage — very soft parallax tilt (calm, premium)
-============================================================ */
-(function(){
-  const stage=document.getElementById('stage');
-  const inner=document.getElementById('stageInner');
-  if(!stage||!inner)return;
-  if(matchMedia('(hover:none)').matches)return;
-  let tx=0,ty=0,cx=0,cy=0,raf;
-  addEventListener('mousemove',e=>{
-    const w=innerWidth,h=innerHeight;
-    tx=((e.clientX/w)-.5)*4;
-    ty=((e.clientY/h)-.5)*-3;
-    if(!raf)raf=requestAnimationFrame(loop);
-  });
-  function loop(){
-    cx+=(tx-cx)*.04;cy+=(ty-cy)*.04;
-    inner.style.transform=`rotateY(${cx.toFixed(3)}deg) rotateX(${cy.toFixed(3)}deg)`;
-    if(Math.abs(tx-cx)>.02||Math.abs(ty-cy)>.02){raf=requestAnimationFrame(loop)}else{raf=null}
-  }
-})();
-
-/* ============================================================
-   Service card — 3D tilt + glow follow
-============================================================ */
-(function(){
-  document.querySelectorAll('[data-tilt]').forEach(card=>{
-    card.addEventListener('mousemove',e=>{
-      const r=card.getBoundingClientRect();
-      const px=((e.clientX-r.left)/r.width-.5);
-      const py=((e.clientY-r.top)/r.height-.5);
-      card.style.setProperty('--tx',(px*6)+'deg');
-      card.style.setProperty('--ty',(py*-6)+'deg');
-      card.style.setProperty('--mx',((e.clientX-r.left)/r.width*100)+'%');
-      card.style.setProperty('--my',((e.clientY-r.top)/r.height*100)+'%');
-    });
-    card.addEventListener('mouseleave',()=>{
-      card.style.setProperty('--tx','0deg');
-      card.style.setProperty('--ty','0deg');
-    });
-  });
-})();
-
-/* ============================================================
-   Tech orbit — true polar positioning with revolution
-============================================================ */
-(function(){
-  const stage=document.querySelector('.orbit-stage');
-  if(!stage)return;
-  let t=0;
-  function tick(){
-    t+=.0025;
-    const w=stage.clientWidth, cx=w/2, cy=w/2;
-    const r1=w*.46, r2=w*.34;
-    stage.querySelectorAll('.orbit-node').forEach(n=>{
-      const [ring,deg]=n.dataset.orbit.split(',').map(Number);
-      const r=ring===1?r1:r2;
-      const dir=ring===1?1:-1;
-      const a=(deg*Math.PI/180)+t*dir;
-      const x=cx+Math.cos(a)*r-n.offsetWidth/2;
-      const y=cy+Math.sin(a)*r-n.offsetHeight/2;
-      n.style.transform=`translate(${x}px,${y}px)`;
-    });
-    requestAnimationFrame(tick);
-  }
-  requestAnimationFrame(tick);
-})();
-
-
-
-/* ============================================================
-   Mobile drawer
-============================================================ */
-(function(){
-  const btn=document.getElementById('menuBtn');
-  const drawer=document.getElementById('drawer');
-  const close=document.getElementById('drawerClose');
-  if(!btn||!drawer)return;
-  btn.addEventListener('click',()=>drawer.classList.add('open'));
-  close.addEventListener('click',()=>drawer.classList.remove('open'));
-  drawer.querySelectorAll('a').forEach(a=>a.addEventListener('click',()=>drawer.classList.remove('open')));
-})();
-
-/* ============================================================
-   Smooth scroll for in-page anchors
-============================================================ */
-document.querySelectorAll('a[href^="#"]').forEach(a=>{
-  a.addEventListener('click',e=>{
-    const id=a.getAttribute('href');
-    if(id.length<2)return;
-    const t=document.querySelector(id);
-    if(t){e.preventDefault();t.scrollIntoView({behavior:'smooth',block:'start'})}
-  });
-});
-</script>
 <!-- ============================================== CONTACT MODAL ============================================== -->
 <div class="contact-modal-overlay" id="contactModal">
   <div class="contact-modal" onclick="event.stopPropagation()">
@@ -1895,7 +1684,7 @@ document.querySelectorAll('a[href^="#"]').forEach(a=>{
 
       <div class="modal-contact-links">
         <a href="mailto:junaidauto46@gmail.com?subject=Project%20Inquiry%20—%20JRK%20Studio">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 22,6"></polyline></svg>
           junaidauto46@gmail.com
         </a>
         <div style="display: flex; align-items: center; gap: 12px; color: #fff; font-size: 14.5px;">
@@ -1916,7 +1705,6 @@ document.querySelectorAll('a[href^="#"]').forEach(a=>{
 
     <div class="modal-form-wrap">
       <form id="inquiryForm" class="contact-form" action="https://formsubmit.co/junaidauto46@gmail.com" method="POST">
-        <!-- FormSubmit config -->
         <input type="hidden" name="_subject" value="New Inquiry from JRK Studio">
         <input type="hidden" name="_captcha" value="false">
         <input type="hidden" name="_template" value="box">
@@ -1978,20 +1766,15 @@ function closeContactModal() {
 }
 document.getElementById('contactModal').addEventListener('click', closeContactModal);
 
-// Form handling via fetch to avoid redirect
 const form = document.getElementById('inquiryForm');
 form.addEventListener('submit', function(e) {
   e.preventDefault();
   form.classList.add('submitting');
-  
   const formData = new FormData(form);
-  
   fetch(form.action, {
     method: 'POST',
     body: formData,
-    headers: {
-      'Accept': 'application/json'
-    }
+    headers: { 'Accept': 'application/json' }
   })
   .then(response => {
     form.classList.remove('submitting');
@@ -2019,233 +1802,240 @@ function resetForm() {
 }
 </script>
 
-<!-- GSAP + ScrollTrigger for scroll-driven avatar sequence -->
+<!-- GSAP + ScrollTrigger for scroll-driven avatar video -->
 <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/ScrollTrigger.min.js"></script>
 
-<!-- Frame registry: Vite hashes src attrs; JS reads el.src for hashed URLs -->
-<div id="avFrames" style="display:none" aria-hidden="true">
-  <img src="assets/avatar/frame-00.jpg" loading="lazy" alt="">
-  <img src="assets/avatar/frame-01.jpg" loading="lazy" alt="">
-  <img src="assets/avatar/frame-02.jpg" loading="lazy" alt="">
-  <img src="assets/avatar/frame-03.jpg" loading="lazy" alt="">
-  <img src="assets/avatar/frame-04.jpg" loading="lazy" alt="">
-  <img src="assets/avatar/frame-05.jpg" loading="lazy" alt="">
-  <img src="assets/avatar/frame-06.jpg" loading="lazy" alt="">
-  <img src="assets/avatar/frame-07.jpg" loading="lazy" alt="">
-  <img src="assets/avatar/frame-08.jpg" loading="lazy" alt="">
-  <img src="assets/avatar/frame-09.jpg" loading="lazy" alt="">
-  <img src="assets/avatar/frame-10.jpg" loading="lazy" alt="">
-  <img src="assets/avatar/frame-11.jpg" loading="lazy" alt="">
-  <img src="assets/avatar/frame-12.jpg" loading="lazy" alt="">
-  <img src="assets/avatar/frame-13.jpg" loading="lazy" alt="">
-  <img src="assets/avatar/frame-14.jpg" loading="lazy" alt="">
-  <img src="assets/avatar/frame-15.jpg" loading="lazy" alt="">
-  <img src="assets/avatar/frame-16.jpg" loading="lazy" alt="">
-  <img src="assets/avatar/frame-17.jpg" loading="lazy" alt="">
-  <img src="assets/avatar/frame-18.jpg" loading="lazy" alt="">
-  <img src="assets/avatar/frame-19.jpg" loading="lazy" alt="">
-  <img src="assets/avatar/frame-20.jpg" loading="lazy" alt="">
-  <img src="assets/avatar/frame-21.jpg" loading="lazy" alt="">
-  <img src="assets/avatar/frame-22.jpg" loading="lazy" alt="">
-  <img src="assets/avatar/frame-23.jpg" loading="lazy" alt="">
-  <img src="assets/avatar/frame-24.jpg" loading="lazy" alt="">
-  <img src="assets/avatar/frame-25.jpg" loading="lazy" alt="">
-  <img src="assets/avatar/frame-26.jpg" loading="lazy" alt="">
-</div>
+<script>
+
+
+/* ============================================================
+   Reveal on scroll
+   ============================================================ */
+(function(){
+  const io=new IntersectionObserver(es=>{
+    es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target)}});
+  },{threshold:.12});
+  document.querySelectorAll('[data-reveal]').forEach(el=>io.observe(el));
+})();
+
+/* ============================================================
+   Hero stage — very soft parallax tilt (calm, premium)
+   ============================================================ */
+(function(){
+  const stage=document.getElementById('stage');
+  const inner=document.getElementById('stageInner');
+  if(!stage||!inner)return;
+  if(matchMedia('(hover:none)').matches)return;
+  let tx=0,ty=0,cx=0,cy=0,raf;
+  addEventListener('mousemove',e=>{
+    const w=innerWidth,h=innerHeight;
+    tx=((e.clientX/w)-.5)*4;
+    ty=((e.clientY/h)-.5)*-3;
+    if(!raf)raf=requestAnimationFrame(loop);
+  });
+  function loop(){
+    cx+=(tx-cx)*.04;cy+=(ty-cy)*.04;
+    inner.style.transform=`rotateY(${cx.toFixed(3)}deg) rotateX(${cy.toFixed(3)}deg)`;
+    if(Math.abs(tx-cx)>.02||Math.abs(ty-cy)>.02){raf=requestAnimationFrame(loop)}else{raf=null}
+  }
+})();
+
+/* ============================================================
+   Mobile drawer
+   ============================================================ */
+(function(){
+  const btn=document.getElementById('menuBtn');
+  const drawer=document.getElementById('drawer');
+  const close=document.getElementById('drawerClose');
+  if(!btn||!drawer)return;
+  btn.addEventListener('click',()=>drawer.classList.add('open'));
+  close.addEventListener('click',()=>drawer.classList.remove('open'));
+  drawer.querySelectorAll('a').forEach(a=>a.addEventListener('click',()=>drawer.classList.remove('open')));
+})();
+
+/* ============================================================
+   Service card — 3D tilt + glow follow
+   ============================================================ */
+(function(){
+  document.querySelectorAll('[data-tilt]').forEach(card=>{
+    card.addEventListener('mousemove',e=>{
+      const r=card.getBoundingClientRect();
+      const px=((e.clientX-r.left)/r.width-.5);
+      const py=((e.clientY-r.top)/r.height-.5);
+      card.style.setProperty('--tx',(px*6)+'deg');
+      card.style.setProperty('--ty',(py*-6)+'deg');
+      card.style.setProperty('--mx',((e.clientX-r.left)/r.width*100)+'%');
+      card.style.setProperty('--my',((e.clientY-r.top)/r.height*100)+'%');
+    });
+    card.addEventListener('mouseleave',()=>{
+      card.style.setProperty('--tx','0deg');
+      card.style.setProperty('--ty','0deg');
+    });
+  });
+})();
+
+/* ============================================================
+   Tech orbit — true polar positioning with revolution
+   ============================================================ */
+(function(){
+  const stage=document.querySelector('.orbit-stage');
+  if(!stage)return;
+  let t=0;
+  function tick(){
+    t+=.0025;
+    const w=stage.clientWidth, cx=w/2, cy=w/2;
+    const r1=w*.46, r2=w*.34;
+    stage.querySelectorAll('.orbit-node').forEach(n=>{
+      const [ring,deg]=n.dataset.orbit.split(',').map(Number);
+      const r=ring===1?r1:r2;
+      const dir=ring===1?1:-1;
+      const a=(deg*Math.PI/180)+t*dir;
+      const x=cx+Math.cos(a)*r-n.offsetWidth/2;
+      const y=cy+Math.sin(a)*r-n.offsetHeight/2;
+      n.style.transform=`translate(${x}px,${y}px)`;
+    });
+    requestAnimationFrame(tick);
+  }
+  requestAnimationFrame(tick);
+})();
+
+/* ============================================================
+   Smooth scroll for in-page anchors
+   ============================================================ */
+document.querySelectorAll('a[href^="#"]').forEach(a=>{
+  a.addEventListener('click',e=>{
+    const id=a.getAttribute('href');
+    if(id.length<2)return;
+    const t=document.querySelector(id);
+    if(t){e.preventDefault();t.scrollIntoView({behavior:'smooth',block:'start'})}
+  });
+});
+</script>
 
 <script>
 /* ============================================================
-   Canvas-based avatar — chroma-key removes black JPEG bg
-   Gives true transparency: no mix-blend-mode, no rectangle
-============================================================ */
+   Scroll-Driven Video Avatar (Chroma-keyed Blend)
+   ============================================================ */
 (function(){
-  var cvs    = document.getElementById('avsImg');
-  var glowEl = document.getElementById('avsScreenGlow');
-  var stageEl= document.querySelector('.av-stage');
-  if (!cvs || !cvs.getContext) return;
+  const video = document.getElementById('avatarVideo');
+  const canvas = document.getElementById('avatarCanvas');
+  if (!video || !canvas) return;
 
-  var ctx = cvs.getContext('2d', {willReadFrequently: true});
-  var frameEls = document.querySelectorAll('#avFrames img');
-  var srcs = Array.from(frameEls, function(el){ return el.src; });
-  var TOTAL = srcs.length;
+  const ctx = canvas.getContext('2d');
+  const heroEl = document.getElementById('top');
+  const glowDomeEl = document.querySelector('.avs-glow');
+  const stageWrapEl = document.querySelector('.stage');
+  const chipEls = Array.from(document.querySelectorAll('.chip'));
 
-  // Cache of processed ImageBitmap (or HTMLImageElement fallback)
-  var cache = new Array(TOTAL);
-  var W = 0, H = 0;
-  var currentFrame = -1;
+  const isMobile = window.innerWidth <= 768 || window.matchMedia('(hover:none)').matches;
 
-  /* Chroma-key: make near-black pixels transparent */
-  function chromaKey(imgEl) {
-    var isMobile = window.innerWidth <= 768;
-    var w = imgEl.naturalWidth  || imgEl.width  || 820;
-    var h = imgEl.naturalHeight || imgEl.height || 1024;
-    
-    // Scale down drastically on mobile for massive performance boost
-    if (isMobile) {
-      w = Math.floor(w * 0.35);
-      h = Math.floor(h * 0.35);
-    }
-
-    if (!W) { W = w; H = h; cvs.width = W; cvs.height = H; }
-    var off = document.createElement('canvas');
-    off.width = w; off.height = h;
-    var oc = off.getContext('2d', {willReadFrequently: true});
-    oc.drawImage(imgEl, 0, 0, w, h);
-    var id = oc.getImageData(0, 0, w, h);
-    var d  = id.data;
-    var THRESH = 55;
-    for (var p = 0; p < d.length; p += 4) {
-      var lum = (d[p] + d[p+1] + d[p+2]) / 3;
-      if (lum < THRESH) d[p+3] = Math.round((lum / THRESH) * d[p+3]);
-    }
-    oc.putImageData(id, 0, 0);
-    return off; /* return offscreen canvas as image source */
-  }
-
-  function drawFrame(n) {
-    n = Math.max(0, Math.min(TOTAL-1, Math.round(n)));
-    
-    // Find closest loaded frame if current one isn't ready
-    var targetIdx = n;
-    if (!cache[n]) {
-      // Look backwards for highest loaded frame
-      for (var j = n - 1; j >= 0; j--) {
-        if (cache[j]) { targetIdx = j; break; }
+  // Render function
+  function renderCanvasFrame() {
+    if (video.videoWidth > 0) {
+      if (canvas.width !== video.videoWidth) {
+        canvas.width = video.videoWidth;
+        canvas.height = video.videoHeight;
       }
-      // If none found backwards, check forwards
-      if (!cache[targetIdx]) {
-        for (var k = n + 1; k < TOTAL; k++) {
-          if (cache[k]) { targetIdx = k; break; }
-        }
-      }
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
     }
-    
-    if (!cache[targetIdx]) return; // Nothing loaded at all
-    if (targetIdx === currentFrame) return; // Already displaying this frame
-    
-    currentFrame = targetIdx;
-    ctx.clearRect(0, 0, cvs.width, cvs.height);
-    ctx.drawImage(cache[targetIdx], 0, 0, cvs.width, cvs.height);
   }
 
-  /* openness: 1 = laptop open (top of page), 0 = laptop closed (scrolled) */
-  function setGlow(openness){
-    if (glowEl) glowEl.style.opacity = (openness * 0.55).toFixed(3);
-  }
+  // Listen for timeupdate and seeked to render immediately
+  video.addEventListener('timeupdate', renderCanvasFrame);
+  video.addEventListener('seeked', renderCanvasFrame);
 
-  /* Load + process a single frame, call cb when done */
-  function loadFrame(idx, cb) {
-    var img = new Image();
-    var called = false;
-    
-    // Safety timeout in case InfinityFree hangs the request
-    var timeoutId = setTimeout(function() {
-      if (!called) {
-        called = true;
-        console.warn("Frame load timeout:", idx);
-        if (cb) cb();
-      }
-    }, 4000); // 4 seconds max per frame
-
-    function done() {
-      if (called) return;
-      called = true;
-      clearTimeout(timeoutId);
-      
-      // Force update canvas if user is already scrolled here
-      if (idx !== 0) updateScroll();
-      
-      if (cb) cb();
+  // Animation loop when playing
+  function drawLoop() {
+    if (!video.paused && !video.ended) {
+      renderCanvasFrame();
+      requestAnimationFrame(drawLoop);
     }
-
-    img.onload = function() {
-      try {
-        cache[idx] = chromaKey(img);
-        if (idx === 0) { /* initial frame (laptop open): paint immediately */
-          cvs.width  = cache[idx].width;
-          cvs.height = cache[idx].height;
-          ctx.clearRect(0, 0, cvs.width, cvs.height);
-          ctx.drawImage(cache[idx], 0, 0);
-          currentFrame = 0;
-        }
-      } catch(e) {
-        console.error("Canvas process error frame", idx, e);
-        cache[idx] = img; // Fallback to raw JPG if canvas errors out
-        if (idx === 0) {
-          cvs.width  = img.naturalWidth || 820;
-          cvs.height = img.naturalHeight || 1024;
-          ctx.clearRect(0, 0, cvs.width, cvs.height);
-          ctx.drawImage(img, 0, 0);
-          currentFrame = 0;
-        }
-      }
-      done();
-    };
-    img.onerror = function() {
-      console.error("Failed to load frame", idx);
-      done(); // keep the sequence going even if 1 frame fails
-    };
-    
-    // Use crossOrigin anonymous to prevent tainting if served from CDN
-    img.crossOrigin = "anonymous";
-    img.src = srcs[idx];
   }
-
-  /* Reduced-motion */
-  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches){
-    loadFrame(0, function(){ drawFrame(0); setGlow(1); });
-    return;
-  }
-
-  /* Load frame 0 first (laptop OPEN = initial state), then load rest concurrently in small batches or fast sequential */
-  loadFrame(0, function(){
-    var i = 1;
-    function loadNext(){
-      if (i >= TOTAL) return;
-      loadFrame(i++, loadNext); // Load sequentially without idle starvation
-    }
-    // Launch 3 concurrent loaders to speed up on slow hosts
-    loadNext();
-    if (TOTAL > 1) { setTimeout(loadNext, 100); }
-    if (TOTAL > 2) { setTimeout(loadNext, 200); }
+  video.addEventListener('play', () => {
+    requestAnimationFrame(drawLoop);
   });
 
-  /* ── Scroll animation: laptop closes on scroll down ── */
-  var glowDomeEl = document.querySelector('.avs-glow');
-  var stageWrapEl= document.querySelector('.stage');
-  var chipEls    = Array.from(document.querySelectorAll('.chip'));
-  var heroEl     = document.getElementById('top');
+  if (window.gsap && window.ScrollTrigger && !isMobile) {
+    gsap.registerPlugin(ScrollTrigger);
 
-  function updateScroll(){
-    if(!heroEl) return;
-    var p = Math.min(1, Math.max(0, window.scrollY / (heroEl.offsetHeight * 0.8)));
-    /* p=0 → frame 0 (laptop OPEN), p=1 → frame 26 (laptop CLOSED) */
-    drawFrame(Math.round((TOTAL - 1) * p));
-    setGlow(1 - p);
-    var openness = 1 - p;
-    if(glowDomeEl){
-      glowDomeEl.style.opacity  = (0.45 + openness * 0.7).toFixed(3);
-      glowDomeEl.style.transform= 'scale(' + (1 + openness * 0.08).toFixed(3) + ')';
+    // Force video to load
+    video.load();
+
+    let initialized = false;
+    let fallbackTimeout;
+
+    function initVideoScrub() {
+      if (initialized) return;
+      initialized = true;
+      clearTimeout(fallbackTimeout);
+      
+      // Pause the video so GSAP ScrollTrigger scrub takes control
+      video.pause();
+      
+      console.log("Initializing GSAP ScrollTrigger video scrub. Duration:", video.duration);
+      
+      // Set duration-based ScrollTrigger scrub
+      gsap.to(video, {
+        currentTime: video.duration || 5, // fallback if duration is 0
+        ease: 'none',
+        scrollTrigger: {
+          trigger: '#top',
+          start: 'top top',
+          end: 'bottom top',
+          scrub: 1, // Smooth scrub delay
+        }
+      });
     }
-    if(stageWrapEl){
-      stageWrapEl.style.transform = 'translateY('+(-p*40)+'px) scale('+(1-p*0.07)+')';
+
+    // Safety fallback: if metadata doesn't load in 3 seconds, autoplay video in loop
+    fallbackTimeout = setTimeout(() => {
+      if (!initialized) {
+        initialized = true;
+        console.warn("Video metadata load timed out, falling back to autoplay loop");
+        video.autoplay = true;
+        video.loop = true;
+        video.play().catch(err => console.log("Autoplay failed:", err));
+      }
+    }, 3000);
+
+    if (video.readyState >= 1) {
+      initVideoScrub();
+    } else {
+      video.addEventListener('loadedmetadata', initVideoScrub);
+      video.addEventListener('canplay', initVideoScrub);
+      video.addEventListener('canplaythrough', initVideoScrub);
     }
-    chipEls.forEach(function(el, i){
-      var chipP = Math.min(1, p / (0.28 + i * 0.1));
+  } else {
+    // Fallback/Mobile: simple loop playback for maximum smoothness
+    video.autoplay = true;
+    video.loop = true;
+    video.play().catch(err => console.log("Autoplay blocked/failed:", err));
+    
+    // Start the draw loop immediately if already playing
+    if (!video.paused) {
+      requestAnimationFrame(drawLoop);
+    }
+  }
+
+  // Ambient/atmosphere visual scaling on scroll (GPU accelerated, smooth on mobile)
+  window.addEventListener('scroll', () => {
+    let p = Math.min(1, Math.max(0, window.scrollY / (heroEl.offsetHeight * 0.8)));
+    let openness = 1 - p;
+
+    if (glowDomeEl) {
+      glowDomeEl.style.opacity = (0.45 + openness * 0.7).toFixed(3);
+      glowDomeEl.style.transform = 'scale(' + (1 + openness * 0.08).toFixed(3) + ')';
+    }
+    if (stageWrapEl) {
+      stageWrapEl.style.transform = 'translateY(' + (-p * 40) + 'px) scale(' + (1 - p * 0.07) + ')';
+    }
+    chipEls.forEach((el, i) => {
+      let chipP = Math.min(1, p / (0.28 + i * 0.1));
       el.style.opacity = (1 - chipP).toFixed(3);
     });
-  }
-
-  window.addEventListener('scroll', updateScroll, {passive:true});
-  updateScroll();
-
-  /* DEBUG OVERLAY — removed */
-
-  /* GSAP parallax on top if available */
-  if(window.gsap && window.ScrollTrigger){
-    gsap.registerPlugin(ScrollTrigger);
-  }
+  }, { passive: true });
 })();
 </script>
 
