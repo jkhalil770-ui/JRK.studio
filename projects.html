@@ -14,6 +14,8 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="preload" href="assets/avatar/frame-00.jpg" as="image" fetchpriority="high">
+<link rel="preload" href="assets/avatar/frame-26.jpg" as="image">
 
 <style>
 /* =====================================================================
@@ -404,7 +406,7 @@ section{padding:120px 24px;position:relative}
 .orbit.r2 .orbit-track{animation-duration:9s;animation-direction:reverse}
 .orbit.r3 .orbit-track{animation-duration:18s}
 
-/* ── video avatar stage ── */
+/* ── avatar stage — scroll-driven 27-frame sequence (same as index.html) ── */
 .av-stage{
   position:absolute;inset:0;
   pointer-events:none;z-index:2;
@@ -414,6 +416,7 @@ section{padding:120px 24px;position:relative}
   pointer-events:none;
   background:transparent;
 }
+/* deep atmospheric halo */
 .avs-glow{
   position:absolute;
   width:100%;height:100%;
@@ -431,7 +434,7 @@ section{padding:120px 24px;position:relative}
   0%,100%{opacity:.70;transform:scale(1)}
   50%{opacity:1;transform:scale(1.06)}
 }
-
+/* float — organic cinematic drift */
 .avs-float{
   position:absolute;inset:0;
   animation:avsFloat 9s ease-in-out infinite;
@@ -443,7 +446,7 @@ section{padding:120px 24px;position:relative}
   78% {transform:translateY(-7px)  translateX(-2px) rotate(.07deg)}
   100%{transform:translateY(0)     translateX(0)    rotate(0)}
 }
-
+/* breath */
 .avs-breath{
   position:absolute;inset:0;
   animation:avsBreath 11s ease-in-out -3.2s infinite;
@@ -453,30 +456,84 @@ section{padding:120px 24px;position:relative}
   40%    {transform:scale(1.019) translateY(-1.5px)}
   70%    {transform:scale(.996)  translateY(.8px)}
 }
-
-/* avatar video element & wrapper */
-.avatar-video-wrap {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  /* clip-path to mask out bottom-right Gemini sparkle star */
-  clip-path: polygon(0% 0%, 100% 0%, 100% 92%, 0% 92%);
-  overflow: hidden;
+/* portrait canvas — screen blend erases residual dark JPEG pixels */
+.avs-img{
+  position:absolute;inset:0;
+  width:100%;height:100%;
+  display:block;
+  object-fit:contain;
+  mix-blend-mode:screen;
+  filter:brightness(1.05) saturate(1.18);
+  -webkit-mask-image:radial-gradient(ellipse 80% 92% at 50% 46%,
+    black 0%,
+    black 35%,
+    rgba(0,0,0,.98) 48%,
+    rgba(0,0,0,.82) 60%,
+    rgba(0,0,0,.48) 72%,
+    rgba(0,0,0,.14) 82%,
+    transparent 90%);
+  mask-image:radial-gradient(ellipse 80% 92% at 50% 46%,
+    black 0%,
+    black 35%,
+    rgba(0,0,0,.98) 48%,
+    rgba(0,0,0,.82) 60%,
+    rgba(0,0,0,.48) 72%,
+    rgba(0,0,0,.14) 82%,
+    transparent 90%);
+  user-select:none;-webkit-user-drag:none;
 }
-
-.avs-video {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  display: block;
-  object-fit: contain;
-  mix-blend-mode: screen;
-  filter: brightness(1.05) saturate(1.18);
-  user-select: none;
-  -webkit-user-drag: none;
+/* cinematic shimmer */
+.avs-shimmer{
+  position:absolute;inset:0;
+  overflow:hidden;pointer-events:none;z-index:3;
 }
+.avs-shimmer::before{
+  content:'';position:absolute;
+  top:0;bottom:0;left:-100%;width:55%;
+  background:linear-gradient(100deg,
+    transparent 0%,
+    rgba(195,160,255,.016) 35%,
+    rgba(165,210,255,.028) 50%,
+    rgba(195,160,255,.016) 65%,
+    transparent 100%);
+  transform:skewX(-14deg);
+  animation:avsShimmer 16s ease-in-out 5s infinite;
+}
+@keyframes avsShimmer{
+  0%,100%{left:-100%;opacity:0}
+  5%{opacity:1}
+  42%{left:170%;opacity:.85}
+  47%{opacity:0;left:170%}
+}
+/* slow counter-rotating rim lights */
+.avs-rim,.avs-rim-2{
+  position:absolute;inset:-18%;border-radius:50%;
+  pointer-events:none;mix-blend-mode:screen;
+}
+.avs-rim{
+  background:conic-gradient(
+    from 0deg,
+    transparent 0deg,transparent 62deg,
+    rgba(160,100,255,.05) 84deg,
+    rgba(195,138,255,.13) 108deg,
+    rgba(160,100,255,.05) 130deg,
+    transparent 150deg,transparent 360deg);
+  animation:rimSpin 24s linear infinite;
+  filter:blur(22px);
+}
+.avs-rim-2{
+  background:conic-gradient(
+    from 195deg,
+    transparent 0deg,transparent 55deg,
+    rgba(90,152,255,.04) 75deg,
+    rgba(128,192,255,.09) 96deg,
+    rgba(90,152,255,.04) 116deg,
+    transparent 136deg,transparent 360deg);
+  animation:rimSpin 34s linear infinite reverse;
+  filter:blur(30px);
+}
+@keyframes rimSpin{to{transform:rotate(360deg)}}
+[data-theme="light"] .av-stage{opacity:0;pointer-events:none}
 
 /* floating glass chips */
 .chip{
@@ -1036,18 +1093,13 @@ footer{
         <div class="av-stage" aria-hidden="true">
           <div class="avs-glow"></div>
           <div class="avs-bg"></div>
+          <div class="avs-rim"></div>
+          <div class="avs-rim-2"></div>
           <div class="avs-float">
             <div class="avs-breath">
-              <!-- Wrapper clips the bottom-right corner to mask out the Gemini logo star -->
-              <div class="avatar-video-wrap">
-                <!-- Hidden video element that decodes frames -->
-                <video id="avatarVideo" style="position:absolute; opacity:0; width:1px; height:1px; pointer-events:none;" autoplay loop muted playsinline preload="auto">
-                  <source src="avatar2.mp4" type="video/mp4">
-                  Your browser does not support the video tag.
-                </video>
-                <!-- Canvas element that renders the video frames with screen blending -->
-                <canvas id="avatarCanvas" class="avs-video"></canvas>
-              </div>
+              <!-- 27-frame scroll-driven sequence (same as index.html) -->
+              <img id="avatarFrame" class="avs-img" src="assets/avatar/frame-00.jpg" alt="" />
+              <div class="avs-shimmer"></div>
             </div>
           </div>
         </div>
@@ -1915,127 +1967,59 @@ document.querySelectorAll('a[href^="#"]').forEach(a=>{
 
 <script>
 /* ============================================================
-   Scroll-Driven Video Avatar (Chroma-keyed Blend)
+   Scroll-Driven 27-Frame Avatar Sequence (same as index.html)
    ============================================================ */
 (function(){
-  const video = document.getElementById('avatarVideo');
-  const canvas = document.getElementById('avatarCanvas');
-  if (!video || !canvas) return;
-
-  const ctx = canvas.getContext('2d');
+  const img   = document.getElementById('avatarFrame');
   const heroEl = document.getElementById('top');
-  const glowDomeEl = document.querySelector('.avs-glow');
+  const glowDomeEl  = document.querySelector('.avs-glow');
   const stageWrapEl = document.querySelector('.stage');
-  const chipEls = Array.from(document.querySelectorAll('.chip'));
+  const chipEls     = Array.from(document.querySelectorAll('.chip'));
 
-  const isMobile = window.innerWidth <= 768 || window.matchMedia('(hover:none)').matches;
+  if (!img) return;
 
-  // Render function
-  function renderCanvasFrame() {
-    if (video.videoWidth > 0) {
-      if (canvas.width !== video.videoWidth) {
-        canvas.width = video.videoWidth;
-        canvas.height = video.videoHeight;
-      }
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-      ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+  const FRAMES = 27;
+  const frames = [];
+  for (let i = 0; i < FRAMES; i++) {
+    frames.push('assets/avatar/frame-' + String(i).padStart(2,'0') + '.jpg');
+  }
+
+  /* preload all frames */
+  frames.forEach(src => { const p = new Image(); p.src = src; });
+
+  let currentFrame = 0;
+  function setFrame(n) {
+    n = Math.max(0, Math.min(FRAMES - 1, n));
+    if (n !== currentFrame) {
+      img.src = frames[n];
+      currentFrame = n;
     }
   }
 
-  // Listen for timeupdate and seeked to render immediately
-  video.addEventListener('timeupdate', renderCanvasFrame);
-  video.addEventListener('seeked', renderCanvasFrame);
+  /* scroll-driven frame swap */
+  function onScroll() {
+    if (!heroEl) return;
+    const p   = Math.min(1, Math.max(0, window.scrollY / (heroEl.offsetHeight * 0.85)));
+    const idx = Math.round(p * (FRAMES - 1));
+    setFrame(idx);
 
-  // Animation loop when playing
-  function drawLoop() {
-    if (!video.paused && !video.ended) {
-      renderCanvasFrame();
-      requestAnimationFrame(drawLoop);
-    }
-  }
-  video.addEventListener('play', () => {
-    requestAnimationFrame(drawLoop);
-  });
-
-  if (window.gsap && window.ScrollTrigger && !isMobile) {
-    gsap.registerPlugin(ScrollTrigger);
-
-    // Force video to load
-    video.load();
-
-    let initialized = false;
-    let fallbackTimeout;
-
-    function initVideoScrub() {
-      if (initialized) return;
-      initialized = true;
-      clearTimeout(fallbackTimeout);
-      
-      // Pause the video so GSAP ScrollTrigger scrub takes control
-      video.pause();
-      
-      console.log("Initializing GSAP ScrollTrigger video scrub. Duration:", video.duration);
-      
-      // Set duration-based ScrollTrigger scrub
-      gsap.to(video, {
-        currentTime: video.duration || 5, // fallback if duration is 0
-        ease: 'none',
-        scrollTrigger: {
-          trigger: '#top',
-          start: 'top top',
-          end: 'bottom top',
-          scrub: 1, // Smooth scrub delay
-        }
-      });
-    }
-
-    // Safety fallback: if metadata doesn't load in 3 seconds, autoplay video in loop
-    fallbackTimeout = setTimeout(() => {
-      if (!initialized) {
-        initialized = true;
-        console.warn("Video metadata load timed out, falling back to autoplay loop");
-        video.autoplay = true;
-        video.loop = true;
-        video.play().catch(err => console.log("Autoplay failed:", err));
-      }
-    }, 3000);
-
-    if (video.readyState >= 1) {
-      initVideoScrub();
-    } else {
-      video.addEventListener('loadedmetadata', initVideoScrub);
-      video.addEventListener('canplay', initVideoScrub);
-      video.addEventListener('canplaythrough', initVideoScrub);
-    }
-  } else {
-    // Fallback/Mobile: simple loop playback for maximum smoothness
-    video.autoplay = true;
-    video.loop = true;
-    video.play().catch(err => console.log("Autoplay blocked/failed:", err));
-    
-    // Start the draw loop immediately if already playing
-    if (!video.paused) {
-      requestAnimationFrame(drawLoop);
-    }
-  }
-
-  // Ambient/atmosphere visual scaling on scroll (GPU accelerated, smooth on mobile)
-  window.addEventListener('scroll', () => {
-    let p = Math.min(1, Math.max(0, window.scrollY / (heroEl.offsetHeight * 0.8)));
-    let openness = 1 - p;
-
+    /* atmosphere + parallax */
     if (glowDomeEl) {
-      glowDomeEl.style.opacity = (0.45 + openness * 0.7).toFixed(3);
-      glowDomeEl.style.transform = 'scale(' + (1 + openness * 0.08).toFixed(3) + ')';
+      const op = 1 - p;
+      glowDomeEl.style.opacity   = (0.45 + op * 0.7).toFixed(3);
+      glowDomeEl.style.transform = 'scale(' + (1 + op * 0.08).toFixed(3) + ')';
     }
     if (stageWrapEl) {
       stageWrapEl.style.transform = 'translateY(' + (-p * 40) + 'px) scale(' + (1 - p * 0.07) + ')';
     }
     chipEls.forEach((el, i) => {
-      let chipP = Math.min(1, p / (0.28 + i * 0.1));
+      const chipP = Math.min(1, p / (0.28 + i * 0.1));
       el.style.opacity = (1 - chipP).toFixed(3);
     });
-  }, { passive: true });
+  }
+
+  window.addEventListener('scroll', onScroll, { passive: true });
+  onScroll(); /* init on load */
 })();
 </script>
 
