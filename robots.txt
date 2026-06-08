@@ -1,3 +1,3 @@
 User-agent: *
 Allow: /
-Sitemap: https://jrkstudio.free.nf/sitemap.xml
+Sitemap: https://jrk-studio.vercel.app/sitemap.xml
