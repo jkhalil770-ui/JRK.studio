@@ -1087,8 +1087,8 @@ footer{
           <div class="avs-rim-2"></div>
           <div class="avs-float">
             <div class="avs-breath">
-              <!-- Hidden video — canvas reads frames from it -->
-              <video id="avatarVideo" style="display:none" autoplay loop muted playsinline preload="auto" crossorigin="anonymous">
+                            <!-- Hidden video — canvas reads frames from it -->
+              <video id="avatarVideo" style="display:none" loop muted playsinline preload="auto" crossorigin="anonymous">
                 <source src="avatar2.mp4" type="video/mp4">
               </video>
               <!-- Canvas with chroma-key — removes black background, no Gemini logo -->
@@ -1977,7 +1977,6 @@ document.querySelectorAll('a[href^="#"]').forEach(a=>{
   var ctx = cvs.getContext('2d', { willReadFrequently: true });
 
   var W = 0, H = 0;
-  var THRESH = 55; // chroma-key threshold — removes near-black pixels
 
   // Set to 1.0 (no crop) since the regenerated video has no Gemini logo
   var CROP_BOTTOM = 1.0;
@@ -1998,13 +1997,18 @@ document.querySelectorAll('a[href^="#"]').forEach(a=>{
     // Draw current video frame (cropped correctly using vh as source height)
     ctx.drawImage(video, 0, 0, vw, vh, 0, 0, W, H);
 
-    // Chroma-key: remove near-black pixels
+    // Chroma-key: remove video compression black noise completely
     var id = ctx.getImageData(0, 0, W, H);
     var d  = id.data;
+    var cutOff = 42; // Below this luminance, pixels are 100% transparent (removes dark block noise)
+    var maxVal = 72; // Smoothly interpolate opacity up to this luminance
     for (var p = 0; p < d.length; p += 4) {
       var lum = (d[p] + d[p+1] + d[p+2]) / 3;
-      if (lum < THRESH) {
-        d[p+3] = Math.round((lum / THRESH) * d[p+3]);
+      if (lum < cutOff) {
+        d[p+3] = 0;
+      } else if (lum < maxVal) {
+        var factor = (lum - cutOff) / (maxVal - cutOff);
+        d[p+3] = Math.round(factor * d[p+3]);
       }
     }
     ctx.putImageData(id, 0, 0);
@@ -2021,16 +2025,35 @@ document.querySelectorAll('a[href^="#"]').forEach(a=>{
   // Start draw loop immediately so first frame renders instantly
   requestAnimationFrame(drawLoop);
 
-  // Event listener fallbacks to ensure rendering
-  video.addEventListener('loadedmetadata', processFrame);
-  video.addEventListener('play', processFrame);
-  video.addEventListener('playing', processFrame);
-
-  // Start playing
-  video.play().catch(function() {
-    // Autoplay blocked — try on user interaction
-    document.addEventListener('click', function() { video.play(); }, { once: true });
+  // Render when metadata is loaded (shows static first frame at scroll = 0)
+  video.addEventListener('loadedmetadata', function() {
+    processFrame();
   });
+
+  // Scroll Trigger: play only when user scrolls down, pause & reset to start at the top
+  function checkScrollPlay() {
+    if (window.scrollY > 15) {
+      if (video.paused) {
+        video.play().catch(function(err) {
+          console.log("Play failed or blocked:", err);
+        });
+      }
+    } else {
+      if (!video.paused) {
+        video.pause();
+        video.currentTime = 0;
+        processFrame(); // update canvas to frame 0 immediately
+      }
+    }
+  }
+
+  window.addEventListener('scroll', checkScrollPlay, { passive: true });
+  checkScrollPlay(); // Run once on load
+  document.addEventListener('click', function() {
+    if (window.scrollY > 15 && video.paused) {
+      video.play().catch(function(err) {});
+    }
+  }, { once: true });
 
   // Scroll atmosphere — same as homepage
   function onScroll() {
