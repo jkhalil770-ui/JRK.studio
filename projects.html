@@ -454,12 +454,22 @@ section{padding:120px 24px;position:relative}
   40%    {transform:scale(1.019) translateY(-1.5px)}
   70%    {transform:scale(.996)  translateY(.8px)}
 }
-/* canvas — chroma-key removes black video background */
+/* canvas — chroma-key + screen blend gives true transparency & blending */
 .avs-img{
   position:absolute;inset:0;
   width:100%;height:100%;
   display:block;
   object-fit:contain;
+  mix-blend-mode:screen;
+  filter:brightness(1.05) saturate(1.18);
+  -webkit-mask-image:radial-gradient(ellipse 80% 92% at 50% 46%,
+    black 0%,
+    black 35%,
+    rgba(0,0,0,.98) 48%,
+    rgba(0,0,0,.82) 60%,
+    rgba(0,0,0,.48) 72%,
+    rgba(0,0,0,.14) 82%,
+    transparent 90%);
   user-select:none;-webkit-user-drag:none;
 }
 /* cinematic shimmer */
@@ -1969,14 +1979,14 @@ document.querySelectorAll('a[href^="#"]').forEach(a=>{
   var W = 0, H = 0;
   var THRESH = 55; // chroma-key threshold — removes near-black pixels
 
-  // Crop bottom 12% to hide the Gemini sparkle logo
-  var CROP_BOTTOM = 0.88;
+  // Set to 1.0 (no crop) since the regenerated video has no Gemini logo
+  var CROP_BOTTOM = 1.0;
 
   function processFrame() {
     if (video.videoWidth === 0) return;
 
     var vw = video.videoWidth;
-    var vh = Math.floor(video.videoHeight * CROP_BOTTOM); // crop bottom
+    var vh = Math.floor(video.videoHeight * CROP_BOTTOM);
 
     // Set canvas size once
     if (W !== vw || H !== vh) {
@@ -1985,8 +1995,8 @@ document.querySelectorAll('a[href^="#"]').forEach(a=>{
       cvs.height = H;
     }
 
-    // Draw current video frame (cropped)
-    ctx.drawImage(video, 0, 0, vw, video.videoHeight, 0, 0, W, H);
+    // Draw current video frame (cropped correctly using vh as source height)
+    ctx.drawImage(video, 0, 0, vw, vh, 0, 0, W, H);
 
     // Chroma-key: remove near-black pixels
     var id = ctx.getImageData(0, 0, W, H);
@@ -2000,15 +2010,21 @@ document.querySelectorAll('a[href^="#"]').forEach(a=>{
     ctx.putImageData(id, 0, 0);
   }
 
-  // Draw loop — runs every animation frame while video plays
+  // Draw loop — runs continuously
   function drawLoop() {
-    processFrame();
+    if (!video.paused && !video.ended || W === 0) {
+      processFrame();
+    }
     requestAnimationFrame(drawLoop);
   }
 
-  video.addEventListener('playing', function() {
-    requestAnimationFrame(drawLoop);
-  });
+  // Start draw loop immediately so first frame renders instantly
+  requestAnimationFrame(drawLoop);
+
+  // Event listener fallbacks to ensure rendering
+  video.addEventListener('loadedmetadata', processFrame);
+  video.addEventListener('play', processFrame);
+  video.addEventListener('playing', processFrame);
 
   // Start playing
   video.play().catch(function() {
