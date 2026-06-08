@@ -1087,8 +1087,8 @@ footer{
           <div class="avs-rim-2"></div>
           <div class="avs-float">
             <div class="avs-breath">
-                            <!-- Hidden video — canvas reads frames from it -->
-              <video id="avatarVideo" style="display:none" loop muted playsinline preload="auto" crossorigin="anonymous">
+              <!-- Hidden video — canvas reads frames from it -->
+              <video id="avatarVideo" style="display:none" autoplay loop muted playsinline preload="auto" crossorigin="anonymous">
                 <source src="avatar2.mp4" type="video/mp4">
               </video>
               <!-- Canvas with chroma-key — removes black background, no Gemini logo -->
@@ -2016,44 +2016,38 @@ document.querySelectorAll('a[href^="#"]').forEach(a=>{
 
   // Draw loop — runs continuously
   function drawLoop() {
-    if (!video.paused && !video.ended || W === 0) {
-      processFrame();
-    }
+    processFrame();
     requestAnimationFrame(drawLoop);
   }
 
   // Start draw loop immediately so first frame renders instantly
   requestAnimationFrame(drawLoop);
 
-  // Render when metadata is loaded (shows static first frame at scroll = 0)
-  video.addEventListener('loadedmetadata', function() {
-    processFrame();
-  });
-
-  // Scroll Trigger: play only when user scrolls down, pause & reset to start at the top
-  function checkScrollPlay() {
-    if (window.scrollY > 15) {
-      if (video.paused) {
-        video.play().catch(function(err) {
-          console.log("Play failed or blocked:", err);
+  // Play video continuously
+  function startVideo() {
+    video.play().catch(function(err) {
+      console.log("Auto-play blocked, waiting for user interaction:", err);
+      
+      // Fallback: play on first click or touch
+      var playFallback = function() {
+        video.play().then(function() {
+          document.removeEventListener('click', playFallback);
+          document.removeEventListener('touchstart', playFallback);
+        }).catch(function(e) {
+          console.log("Interaction play failed:", e);
         });
-      }
-    } else {
-      if (!video.paused) {
-        video.pause();
-        video.currentTime = 0;
-        processFrame(); // update canvas to frame 0 immediately
-      }
-    }
+      };
+      document.addEventListener('click', playFallback);
+      document.addEventListener('touchstart', playFallback);
+    });
   }
 
-  window.addEventListener('scroll', checkScrollPlay, { passive: true });
-  checkScrollPlay(); // Run once on load
-  document.addEventListener('click', function() {
-    if (window.scrollY > 15 && video.paused) {
-      video.play().catch(function(err) {});
-    }
-  }, { once: true });
+  // Play immediately if ready, or as soon as video loads data
+  if (video.readyState >= 2) {
+    startVideo();
+  } else {
+    video.addEventListener('loadeddata', startVideo);
+  }
 
   // Scroll atmosphere — same as homepage
   function onScroll() {
