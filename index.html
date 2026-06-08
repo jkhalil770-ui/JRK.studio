@@ -2094,10 +2094,16 @@ function resetForm() {
     oc.drawImage(imgEl, 0, 0, w, h);
     var id = oc.getImageData(0, 0, w, h);
     var d  = id.data;
-    var THRESH = 55;
+    var cutOff = 42; // Below this luminance, pixels are 100% transparent (removes dark block noise)
+    var maxVal = 72; // Smoothly interpolate opacity up to this luminance
     for (var p = 0; p < d.length; p += 4) {
       var lum = (d[p] + d[p+1] + d[p+2]) / 3;
-      if (lum < THRESH) d[p+3] = Math.round((lum / THRESH) * d[p+3]);
+      if (lum < cutOff) {
+        d[p+3] = 0;
+      } else if (lum < maxVal) {
+        var factor = (lum - cutOff) / (maxVal - cutOff);
+        d[p+3] = Math.round(factor * d[p+3]);
+      }
     }
     oc.putImageData(id, 0, 0);
     return off; /* return offscreen canvas as image source */
